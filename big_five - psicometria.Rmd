@@ -1,0 +1,184 @@
+---
+title: "big_five"
+author: "Maurício Bueno"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+  word_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Essas análises foram realizadas para compor o manual do Inventário dos Cinco Grandes Fatores de Personalidade da disciplina de Técnicas Psicométricas de Avaliação Psicológica. 
+O primeiro passo é carregar os pacotes.
+
+# Carregamentos dos pacotes
+
+```{r}
+library(GPArotation) # Pacote para rotacao analise fatorial.
+library(tidyverse)
+library(psych)
+library(knitr)
+library(lavaan)
+library(semPlot)
+library(haven)
+library(foreign)
+library(pillar)
+library(mirt)
+library(igraph)
+library(igraphdata)
+library(readxl)
+library(readr)
+library(expss)
+library(janitor)
+library(pander)
+library(arsenal)
+library(rstatix)
+library(corrplot)
+
+```
+
+# Análise Fatorial
+
+```{r}
+big_five <- readRDS("big_five.rds")
+
+names(big_five) %>% as.data.frame()
+
+# KMO
+big_five %>% select(9:58) %>% KMO()
+
+# Bartlett
+big_five %>% select(9:58) %>% bartlett.test()
+
+# Número de fatores a serem retidos
+
+## Matriz de correlações policóricas para análise paralela
+corrpoly_bigfive <- big_five %>% select(9:58) %>% polychoric(.)
+rho_corrpoly_bigfive <- corrpoly_bigfive$rho
+
+## scree-plot
+scree_big_five <- scree(rho_corrpoly_bigfive, 
+                        pc = FALSE, 
+                        main = "Gráfico de Sedimentação")
+
+## parallel analysis
+parallel_bigfive <- fa.parallel(rho_corrpoly_bigfive, 
+                                n.obs=nrow(big_five), 
+                                fa="fa") 
+parallel_bigfive$fa.values # mostra os eigenvalues com os dados experimentais
+parallel_bigfive$fa.sim    # mostra os eigenvalues com os dados simulados
+
+### Decisão pela extração dos cinco fatores com eigenvalue > 1.
+
+## ANÁLISE FATORIAL
+
+### usei recode para colocar os itens negativos contrários aos positivos.
+recode(big_five[ ,c("E2","E4","E6","E8","E10",
+                                "N2","N4",
+                                "A3","A5","A7",
+                                "C2","C4","C6","C8",
+                                "O2","O4","O6")]) <- c(1~5,2~4,3~3,4~2,5~1)
+names(big_five)
+fa_bigfive <- fa(big_five[,9:58], 
+                 nfactors = '5', 
+                 cor ='poly', 
+                 fm ='wls', 
+                 rotate = 'geominQ')
+
+fa_bigfive$loadings
+
+```
+
+# Fidedignidade
+
+```{r}
+
+rely_E <- big_five %>% select(9:18) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,-1,1,-1))
+rely_N <- big_five %>% select(19:28) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,1,1,1,1,1))
+rely_A <- big_five %>% select(29:38) %>% omega(digits=3,poly=TRUE,key = c(1,1,-1,1,-1,1,-1,1,1,1))
+rely_C <- big_five %>% select(39:48) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,-1,1,1))
+rely_O <- big_five %>% select(49:58) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,1,1,1))
+
+relyBR_E <- big_five_BR %>% select(9:18) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,-1,1,-1))
+relyBR_N <- big_five_BR %>% select(19:28) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,1,1,1,1,1))
+relyBR_A <- big_five_BR %>% select(29:38) %>% omega(digits=3,poly=TRUE,key = c(1,1,-1,1,-1,1,-1,1,1,1))
+relyBR_C <- big_five_BR %>% select(39:48) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,-1,1,1))
+relyBR_O <- big_five_BR %>% select(49:58) %>% omega(digits=3,poly=TRUE,key = c(1,-1,1,-1,1,-1,1,1,1,1))
+data.frame(Fatores = c("Extroversão",
+                       "Neuroticismo",
+                       "Amabilidade",
+                       "Conscienciosidade",
+                       "Abertura"),
+           "Alfa de Cronbach" = c(rely_E$alpha,
+                                  rely_N$alpha,
+                                  rely_A$alpha,
+                                  rely_C$alpha,
+                                  rely_O$alpha),
+           "Alfa de Cronbach - BR" = c(relyBR_E$alpha,
+                                       relyBR_N$alpha,
+                                       relyBR_A$alpha,
+                                       relyBR_C$alpha,
+                                       relyBR_O$alpha)) %>% pander()
+
+nrow(big_five)
+nrow(big_five_BR)
+
+# estatísticas descritivas
+big_five_BR %>% 
+  select(59:63) %>%
+  describe() %>%
+  round(digits = 2) %>%
+  mutate(dp_ab = mean - sd, dp_ac = mean + sd) %>% 
+  kable()
+
+# normas
+## Extroversão
+pnorm(seq(1,5,0.1),
+      mean = mean(big_five$extr,na.rm = TRUE),
+      sd = sd(big_five$extr,na.rm = TRUE))
+
+## Neuroticismo
+pnorm(seq(1,5,0.1),
+      mean = mean(big_five$neur,na.rm = TRUE),
+      sd = sd(big_five$neur,na.rm = TRUE))
+
+## Amabilidade
+pnorm(seq(1,5,0.1),
+      mean = mean(big_five$amab,na.rm = TRUE),
+      sd = sd(big_five$amab,na.rm = TRUE))
+
+## Conscienciosidade
+pnorm(seq(1,5,0.1),
+      mean = mean(big_five$aber,na.rm = TRUE),
+      sd = sd(big_five$aber,na.rm = TRUE))
+
+## Abertura
+pnorm(seq(1,5,0.1),
+      mean = mean(big_five$extr,na.rm = TRUE),
+      sd = sd(big_five$extr,na.rm = TRUE))
+
+# tabela com os escores brutos, escores padronizados (z) e percentis
+data.frame(Escores = seq(1,5,0.1),
+           Extr = round(pnorm(seq(1,5,0.1),mean = mean(big_five_BR$extr,na.rm = TRUE),sd = sd(big_five_BR$extr,na.rm = TRUE))*100),
+           Extr = round((seq(1,5,0.1) - mean(big_five_BR$extr,na.rm = TRUE))/sd(big_five_BR$extr,na.rm = TRUE), digits = 2),
+           Neur = round(pnorm(seq(1,5,0.1),mean = mean(big_five_BR$neur,na.rm = TRUE),sd = sd(big_five_BR$neur,na.rm = TRUE))*100),
+           Neur = round((seq(1,5,0.1) - mean(big_five_BR$neur,na.rm = TRUE))/sd(big_five_BR$neur,na.rm = TRUE), digits = 2),
+           Amab = round(pnorm(seq(1,5,0.1),mean = mean(big_five_BR$amab,na.rm = TRUE),sd = sd(big_five_BR$amab,na.rm = TRUE))*100),
+           Amab = round((seq(1,5,0.1) - mean(big_five_BR$amab,na.rm = TRUE))/sd(big_five_BR$amab,na.rm = TRUE), digits = 2),
+           Cons = round(pnorm(seq(1,5,0.1),mean = mean(big_five_BR$cons,na.rm = TRUE),sd = sd(big_five_BR$cons,na.rm = TRUE))*100),
+           Cons = round((seq(1,5,0.1) - mean(big_five_BR$cons,na.rm = TRUE))/sd(big_five_BR$cons,na.rm = TRUE), digits = 2),
+           Aber = round(pnorm(seq(1,5,0.1),mean = mean(big_five_BR$aber,na.rm = TRUE),sd = sd(big_five_BR$aber,na.rm = TRUE))*100),
+           Aber = round((seq(1,5,0.1) - mean(big_five_BR$aber,na.rm = TRUE))/sd(big_five_BR$aber,na.rm = TRUE), digits = 2)) %>% kable()
+names(big_five_BR)
+
+tableby(gênero ~ idade, data = big_five_BR) %>% summary(text = TRUE)
+```
+

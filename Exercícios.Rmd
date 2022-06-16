@@ -1,0 +1,577 @@
+---
+title: "Exercício"
+author: "Maurício Bueno"
+date: "04/09/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+  word_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+# Ativar os pacotes
+
+Sempre, antes de começar a trabalhar com o R, precisamos ativar os pacotes (bibliotecas) que vamos usar.
+Neste caso, são as seguintes:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+```
+
+# Definir o diretório de trabalho
+
+Após ativar os pacotes, ainda é preciso definir o diretório de trabalho no R.
+Fazemos isso usando a função `setwd()`.
+Dentro dos parênteses, temos que informar o caminho até o diretório que iremos usar.
+Por exemplo, no computador que estou usando neste momento, o diretório está em *C:\\Users\\mauricio\\OneDrive\\Documentos\\R\\R_basico\\Intro_R.* Então, o código para definição do diretório ficaria assim:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+setwd("C:/Users/jmhbu/OneDrive/Documentos/R/R_basico/Intro_R")
+```
+
+# Importar arquivo do Excel para o R
+
+Nesta atividade, nós vamos um banco de dados público, que contem algumas informações sobre os respondentes e diversos itens de um teste de personalidade.
+Os itens estão na seguinte ordem: extroversão (E), neuroticismo (N), amabilidade (A), conscienciosidade (C) e Abertura (O).
+Copie o arquivo *big_five.xlsx* para o diretório de trabalho (definido no item anterior).
+
+Esse é um banco de dados estrangeiro, está codificado no sistema europeu.
+Vamos usar a função read_excel() para importá-lo.
+Dentro dos parênteses informamos o arquivo (entre aspas e com a extensão).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+big_five <- readxl::read_excel("big_five.xlsx")
+
+# ao rodar o comando, o arquivo será importando e salvo como dataframe no R. Você verá um objeto com esse nome, no quadro superior à direita.
+
+# use um comando de visualização dos dados, para ver se o arquivo está ok. 
+view(big_five)
+```
+
+# Informações sobre o banco de dados
+
+O banco de dados utilizado neste exercício (baixado da internet) foram coletados (c. 2012) por meio de um teste de personalidade online interativo.
+Os itens foram avaliados em uma escala de cinco pontos, em que 1 = Discordo, 3 = Neutro, 5 = Concordo (0 = não respondido).
+Os itens foram os seguintes:
+
+E1 - I am the life of the party.
+
+E2 - I don't talk a lot.
+
+E3 - I feel comfortable around people.
+
+E4 - I keep in the background.
+
+E5 - I start conversations.
+
+E6 - I have little to say.
+
+E7 - I talk to a lot of different people at parties.
+
+E8 - I don't like to draw attention to myself.
+
+E9 - I don't mind being the center of attention.
+
+E10 - I am quiet around strangers.
+
+N1 - I get stressed out easily.
+
+N2 - I am relaxed most of the time.
+
+N3 - I worry about things.
+
+N4 - I seldom feel blue.
+
+N5 - I am easily disturbed.
+
+N6 - I get upset easily.
+
+N7 - I change my mood a lot.
+
+N8 - I have frequent mood swings.
+
+N9 - I get irritated easily.
+
+N10 - I often feel blue.
+
+A1 - I feel little concern for others.
+
+A2 - I am interested in people.
+
+A3 - I insult people.
+
+A4 - I sympathize with others' feelings.
+
+A5 - I am not interested in other people's problems.
+
+A6 - I have a soft heart.
+
+A7 - I am not really interested in others.
+
+A8 - I take time out for others.
+
+A9 - I feel others' emotions.
+
+A10 - I make people feel at ease.
+
+C1 - I am always prepared.
+
+C2 - I leave my belongings around.
+
+C3 - I pay attention to details.
+
+C4 - I make a mess of things.
+
+C5 - I get chores done right away.
+
+C6 - I often forget to put things back in their proper place.
+
+C7 - I like order.
+
+C8 - I shirk my duties.
+
+C9 - I follow a schedule.
+
+C10 - I am exacting in my work.
+
+O1 - I have a rich vocabulary.
+
+O2 - I have difficulty understanding abstract ideas.
+
+O3 - I have a vivid imagination.
+
+O4 - I am not interested in abstract ideas.
+
+O5 - I have excellent ideas.
+
+O6 - I do not have a good imagination.
+
+O7 - I am quick to understand things.
+
+O8 - I use difficult words.
+
+O9 - I spend time reflecting on things.
+
+O10 - I am full of ideas.
+
+**race** (raça): Foi escolhida pelos participantes em um menu suspenso.
+
+0 = Dados perdidos
+
+1 = Raça Mista
+
+2 = Ártico (Siberiano, Esquimó)
+
+3 = Caucasiano (Europeu)
+
+4 = Caucasiano (Indiano)
+
+5 = Caucasiano (Médio Leste)
+
+6 = Caucasiano (Norte Africano, Outro)
+
+7 = Indígena Australiano
+
+8 = Nativo Americano
+
+9 = Nordeste Asiático (Mongol, Tibetano, Japonês Coreano, etc)
+
+10 = Pacífico (Polinésia, Micronésia, etc.)
+
+11 = Sudeste Asiático (Chinês, Tailandês, Malaio, Filipino, etc.)
+
+12 = Oeste da África, Bosquímanos, Etíope
+
+13 = Outro
+
+**age**: inserida como texto (indivíduos que relataram idade \<13 anos não foram registrados)
+
+**engnat**: Resposta a "o inglês é sua língua nativa?": 0 = dados perdidos, 1 = sim, 2 = não
+
+**gender**: Escolhido em um menu suspenso.
+0 = dados perdidos, 1 = Masculino, 2 = Feminino, 3 = Outro
+
+**hand**: "Com que mão você escreve?".
+0 = dados perdidos, 1 = Direita, 2 = Esquerda, 3 = Ambos
+
+**country**: Código ISO do país.
+
+**source**: Como o participante soube do teste.
+1 = de outra página no site de teste 2 = do google 3 = do facebook 4 = de qualquer url com ".edu" em seu nome de domínio (por exemplo, xxx.edu, xxx.edu.au), 5 = não informado no arquivo 6 = outra fonte ou HTTP Referer não fornecido.
+
+# Exercícios
+
+1.  Visualise o banco de dados com as funções names() e view() para checar se tudo foi importado corretamente.
+
+```{r}
+cópia_de_segurança <- big_five
+# names(big_five)
+# View(big_five)
+```
+
+2.  Quantas variáveis existem no banco de dados? (igual ao número de colunas)
+
+```{r eval=FALSE, echo=FALSE}
+ncol(big_five)
+```
+
+3.  Quantos sujeitos constam no banco de dados? (igual ao número de linhas)
+
+```{r eval=FALSE, echo=FALSE}
+nrow(big_five)
+```
+
+4.  Como as variáveis estão codificadas no banco de dados (character, numeric, factor, etc...)? Obs: uma variável numérica pode estar como número inteiro (int) ou como número decimal (dbl).
+
+```{r eval=FALSE, echo=FALSE}
+str(big_five)
+```
+
+5.  Renomeie as variáveis, traduzindo-as para o português: raça = race, idade = age, ing_nat = engnat, gênero = gender, mão_dom = hand, fonte = source, país = country. Salve essa modificação no dataframe *big_five*.
+
+```{r}
+big_five <- rename(big_five,c(raça = race, idade = age, ing_nat = engnat, gênero = gender, mão_dom = hand, fonte = source, país = country))
+```
+
+6.  Crie uma coluna **id** para identificar os sujeitos com um "s" seguido do número do sujeito. Por exemplo, s1, s2, s3... sn. Posicione essa coluna como a primeira do banco de dados.
+
+```{r}
+# para não ter que reordenar as variáveis depois que id estiver no final do dataframe, pode-se criar um vetor com os ids e depois fazer um cbind com o big_five.
+
+id <- paste("s",1:nrow(big_five),sep = "")
+big_five <- cbind(id,big_five)
+
+# essa função do dplyr reloca colunas para o início do dataframe
+# big_five %>% relocate(id) %>% names()
+```
+
+7.  As variáveis raça, ing_nat, gênero e mão_dom estão codificadas como número inteiro (integer, abreviado como int). Transforme-as em fatores.
+
+```{r}
+# str(big_five)
+big_five$raça <- as.factor(big_five$raça)
+big_five$ing_nat <- as.factor(big_five$ing_nat)
+big_five$gênero <- as.factor(big_five$gênero)
+big_five$mão_dom <- as.factor(big_five$mão_dom)
+```
+
+8.  Agora é necessário atribuir os níveis de cada variável que foi transformada em fator. Os níveis para cada variável estão descritos no início deste documento. Lembrete: os níveis têm que ser atribuídos na mesma ordem dos valores. Por exemplo, na variável *gênero* o número 1 foi atribuído a *Masculino*, 2 a *Feminino* e 3 a *Outros.* Além disso, o valor 0 foi atribuído a respostas faltantes. Essas precisam ser transformadas em NA no R. Portanto, temos 0, 1, 2 e 3 no banco de dados, e os nomes desses níveis devem aparecer nessa ordem na linha de comando dessa variável.
+
+```{r}
+levels(big_five$raça) <- c(NA,
+                           "Raça Mista",
+                           "Ártico (Siberiano, Esquimó)",
+                           "Caucasiano (Europeu)",
+                           "Caucasiano (Indiano)",
+                           "Caucasiano (Médio Leste)",
+                           "Caucasiano (Norte Africano, Outro)",
+                           "Indígena Australiano",
+                           "Nativo Americano",
+                           "Nordeste Asiático (Mongol, Tibetano, Japonês Coreano, etc)",
+                           "Pacífico (Polinésia, Micronésia, etc.)",
+                           "Sudeste Asiático (Chinês, Tailandês, Malaio, Filipino, etc.)",
+                           "Oeste da África, Bosquímanos, Etíope",
+                           "Outro"
+                           )
+```
+
+```{r}
+levels(big_five$ing_nat) <- c(NA,"Sim","Não")
+```
+
+```{r}
+levels(big_five$gênero) <- c(NA,"Masculino","Feminino","Outro")
+```
+
+```{r eval=FALSE, echo=FALSE}
+levels(big_five$mão_dom) <- c(NA,"Direita","Esquerda","Ambas")
+count(big_five,idade)
+str(big_five)
+```
+
+9.  Rode a função `count(big_five,idade)` para contar quantas pessoas de cada idade há no banco de dados. Observe se há algo estranho.
+10. Selecione apenas os participantes com idades até 80 anos (inclusive) e provenientes dos Estados Unidos (US). Salve esses participantes em um novo dataframe chamado **bf80us**.
+
+```{r}
+bf80us <- big_five[c(big_five$idade <= 80 & big_five$país == "US"), ]
+```
+
+11. Quantos sujeitos compõem esse novo banco de dados?
+
+```{r eval=FALSE, echo=FALSE}
+nrow(bf80us)
+```
+
+12. Exporte o scritp deste exercício no formato `.rds` usando a função `saveRDS(bf80us,"bf80us.rds")` e envie pelo google classroom para cumprir a atividade assíncrona dessa semana.
+
+```{r}
+saveRDS(bf80us,"bf80us.rds")
+
+```
+
+13. Voltando a trabalhar com o arquivo big_five, criar uma nova variável chamada faixa_etária com as seguintes faixas: até 20 anos (1), de 21 a 30 (2), 31 a 40 (3), 41 a 50 (4), 51 a 60 (5), 61 a 70 (6), 71 a 80 (7) e atribua NA para valores superiores a 80. Salve essa nova variável no dataframe big_five.
+
+```{r echo=TRUE}
+
+big_five$faixa_etária <- ifelse(big_five$idade <= 20, 1,
+                         ifelse(big_five$idade > 20 & big_five$idade <= 30,2,
+                         ifelse(big_five$idade > 30 & big_five$idade <= 40,3,
+                         ifelse(big_five$idade > 40 & big_five$idade <= 50,4,
+                         ifelse(big_five$idade > 50 & big_five$idade <= 60,5,
+                         ifelse(big_five$idade > 60 & big_five$idade <= 70,6,
+                         ifelse(big_five$idade > 70 & big_five$idade <= 80,7,NA)))))))
+str(big_five)
+```
+
+14. Atribua labels (`apply_labels()`) aos itens do teste de personalidade, usando as afirmações que foram respondidas pelos participantes da pesquisa.
+
+```{r echo=TRUE}
+# cópia_de_segurança2 <- big_five
+library(expss)
+big_five  <- apply_labels(big_five,
+E1  = "I am the life of the party",
+E2  = "I don't talk a lot",
+E3  = "I feel comfortable around people",
+E4  = "I keep in the background",
+E5  = "I start conversations",
+E6  = "I have little to say",
+E7  = "I talk to a lot of different people at parties",
+E8  = "I don't like to draw attention to myself",
+E9  = "I don't mind being the center of attention",
+E10 = "I am quiet around strangers",
+N1  = "I get stressed out easily",
+N2  = "I am relaxed most of the time",
+N3  = "I worry about things",
+N4  = "I seldom feel blue",
+N5  = "I am easily disturbed",
+N6  = "I get upset easily",
+N7  = "I change my mood a lot",
+N8  = "I have frequent mood swings",
+N9  = "I get irritated easily",
+N10 = "I often feel blue",
+A1  = "I feel little concern for others",
+A2  = "I am interested in people",
+A3  = "I insult people",
+A4  = "I sympathize with others' feelings",
+A5  = "I am not interested in other people's problems",
+A6  = "I have a soft heart",
+A7  = "I am not really interested in others",
+A8  = "I take time out for others",
+A9  = "I feel others' emotions",
+A10 = "I make people feel at ease",
+C1  = "I am always prepared",
+C2  = "I leave my belongings around",
+C3  = "I pay attention to details",
+C4  = "I make a mess of things",
+C5  = "I get chores done right away",
+C6  = "I often forget to put things back in their proper place",
+C7  = "I like order",
+C8  = "I shirk my duties",
+C9  = "I follow a schedule",
+C10 = "I am exacting in my work",
+O1  = "I have a rich vocabulary.",
+O2  = "I have difficulty understanding abstract ideas",
+O3  = "I have a vivid imagination",
+O4  = "I am not interested in abstract ideas",
+O5  = "I have excellent ideas",
+O6  = "I do not have a good imagination",
+O7  = "I am quick to understand things",
+O8  = "I use difficult words",
+O9  = "I spend time reflecting on things",
+O10 = "I am full of ideas")
+```
+
+15. Nos cinco fatores desse instrumento, há itens na direção do fator e itens no sentido inverso. Por exemplo, na escala de extroversão há itens como *"I am the life of the party"*, que descreve uma pessoa extrovertida, e itens como *"I don't talk a lot"*, que descreve uma pessoa introvertida. Esse problema precisa ser resolvido antes de calcularmos os escores das pessoas nesse fator. Se as pessoas responderam esses itens usando uma escala Likert de 5 pontos, não podemos somar os valores desses itens diretamente porque eles têm significados diferentes. Por exemplo, se uma pessoa atribuiu valor 5 ao item *"I am the life of the party"*, esse 5 indica que ela é muito **ex**trovertida. Mas o mesmo valor 5 atribuído ao item *"I don't talk a lot"* indica que a pessoa é muito **in**trovertida. Portanto, temos um problema porque o mesmo valor (5) significa coisas diferentes em itens diferentes. Para evitarmos esse problema temos que inverter os valores dos itens que vão na direção da introversão, mudar o 1 para 5, o 2 para 4, o 3 permanece 3, o 4 para 2 e o 5 para 1.
+
+```{r echo=TRUE}
+library(expss)
+
+# uma solução seria usar ifelse
+big_five$E2_mod <- ifelse(big_five$E2 == 1,5,
+                          ifelse(big_five$E2 == 2,4,
+                                 ifelse(big_five$E2 == 3,3,
+                                        ifelse(big_five$E2 == 4,2,
+                                               ifelse(big_five$E2 == 5,1,NA)))))
+# no entanto, essa solução exigiria criar um código desse para cada variável.
+# a função recode() do expss facilita a modificação de variáveis em bloco.
+# essa função foi rodada em 25/09 e desligada em seguida para evitar sobreposição de arquivos.
+
+#recode(big_five[ ,c('E2','E4','E6','E8','E10','N2','N4','A1','A3','A5','A7','C2','C4','C6','C8','O2','O4','O6')]) <- c(1~5,2~4,3~3,4~2,5~1,NA~NA)
+
+# com os itens recodificados, calcular os escores
+# os comandos a seguir foram rodados em 25/09/2021 e desligados para evitar sobreposição de arquiovs
+
+# big_five %>% names() %>% as.data.frame()
+# big_five$extr <- big_five %>% select( 9:18) %>% rowMeans()
+# big_five$neur <- big_five %>% select(19:28) %>% rowMeans()
+# big_five$amab <- big_five %>% select(29:38) %>% rowMeans()
+# big_five$cons <- big_five %>% select(39:48) %>% rowMeans()
+# big_five$aber <- big_five %>% select(49:58) %>% rowMeans()
+# 
+# saveRDS(big_five,"big_five.rds")
+```
+
+## Exercícios usando Tidyverse
+
+Nos próximos exercícios vamos trabalhar com a base de dados imdb, que apresenta uma série de informações sobre filmes disponibilizados pela Amazon.
+Baixe o dataframe [aqui](https://1drv.ms/u/s!ApvtT9NG4aYoko4EF7YU3p-l3oOOcw?e=rsU4Ti) (link válido até 30/09/2021) e importe-o para dentro do RStudio e use as funções do tidyverse para resolver os próximos exercícios.
+
+```{r}
+imdb <- readr::read_rds("imdb.rds")
+str(imdb)
+```
+
+16. Crie uma variável id para todos os sujeitos do dataframe e coloque essa variável na primeira coluna. Não se esqueça de salvar essa transformação no dataframe imdb.
+
+```{r eval=FALSE, include=FALSE}
+#imdb_copia <- imdb
+nrow(imdb)
+imdb$id <- paste("s",1:nrow(imdb),sep = "")
+
+imdb <- imdb %>% select(id,everything())
+glimpse(imdb)
+```
+
+17. Selecione as variáveis título, duração, cor e gênero dos 1000 primeiros casos do banco de dados. Não precisa salvar.
+
+```{r eval=FALSE, include=FALSE}
+imdb %>% select(titulo,duracao,cor,generos) %>% slice(1:1000)
+```
+
+18. Monte um dataframe somente com os filmes do diretor Clint Eastwood. Salve-o como imdb_clint.
+
+```{r eval=FALSE, include=FALSE}
+imdb_clint <- imdb %>% filter(diretor == "Clint Eastwood")
+```
+
+19. Reorganize o dataframe com filmes do diretor Clint Eastwood por ordem decrescente de receita e visualise os dados para ver se funcionou. Salve o dataframe com o mesmo nome.
+
+```{r eval=FALSE, include=FALSE}
+imdb_clint <- imdb_clint %>% arrange(desc(receita)) %>% view()
+```
+
+20. Selecione uma amostra aleatória do dataframe imdb com 45% dos filmes relacionados. Não precisa salvar.
+
+```{r eval=FALSE, include=FALSE}
+imdb %>% slice_sample(prop = .45)
+```
+
+21. Calcule as médias de orçamento e de receita, por diretor. Salve o resultado num objeto chamado imdb_lucro. Obs.: Nos resultados vão aparecer sinais como NA ou NaN, porque há informações não disponíveis que acabam não permitindo os cálculos desejados.
+
+```{r eval=FALSE, include=FALSE}
+view(imdb)
+imdb_lucro <- imdb %>% group_by(diretor) %>% summarise(Orçamento_médio = mean(orcamento, na.rm = TRUE), Receita_média = mean(receita, na.rm = TRUE))
+```
+
+22. No dataframe anterior, crie a variável lucro, a partir das médias de orçamento e receita. Identifique o diretor mais lucrativo e o que dá mais prejuízo.
+
+```{r eval=FALSE, include=FALSE}
+# o mais lucrativo
+imdb_lucro %>% mutate(lucro = Orçamento_médio - Receita_média) %>% arrange(desc(lucro))
+
+# o que dá mais prejuízo
+imdb_lucro %>% mutate(lucro = Orçamento_médio - Receita_média) %>% arrange(lucro)
+```
+
+23. Voltando ao dataframe completo (imdb). Obtenha um dataframe que contenha somente os diretores que tiverem 3 filmes ou mais no catálogo.
+
+Dica1: A informação de quantos filmes cada diretor tem, não está diretamente disponível no dataframe.
+O que a gente tem é uma linha por filme.
+Então, o mesmo diretor pode constar em várias linhas, correspondentes aos filmes que ele dirigiu.
+
+Dica2: nesse caso, temos que usar o operador `%in%` ao invés de `==` porque `%in%` permite comparar objetos de tamanhos diferentes, enquanto o `==` só permite comparar objetos de tamanhos iguais, ou uma coluna com UMA informação.
+Veja o exemplo com o dataframe big_five
+
+```{r }
+# no dataframe big_five, se quisermos filtrar os participantes estadunidenses, podemos usar o filter. 
+big_five %>% filter(país == "US") %>% glimpse()
+
+# porém, se quisermos filtrar os países com mais de 100 participantes, podemos fazer o seguinte:
+# pegue o dataframe big_five; ENTÃO, conte a frequência dos países; ENTÃO, filtre os países cujo n for maior que 100. Guarde essa tabela num objeto chamado pais.
+pais <- big_five %>% count(país) %>% filter(n>=100)
+
+# guardar somente a coluna com o nome dos países selecionados.
+lista_país <- pais$país
+
+# com isso obtemos uma lista dos países (lista_país) que contêm mais de 100 participantes. Agora, queremos selecionar em big_five$país somente aqueles que forem iguais a um dos países constantes na lista_país. Para isso temos que usar o código %in% ao invés de == 
+
+big_five %>% filter(país %in% lista_país) %>% glimpse()
+
+# se rodarmos com == no lugar de %in% vai dar erro porque o comprimento da lista não é igual ao comprimento do dataframe big_five.
+
+#big_five %>% filter(país == lista_país) 
+
+```
+
+```{r eval=FALSE, include=FALSE}
+# contar a ocorrência de diretores e filtrar os que aparecem 3x ou mais.
+imdb_diretores_3mais <- imdb %>% count(diretor) %>% filter(n>=3) %>% arrange(n)
+
+# retirar somente o vetor "diretores" do objeto imdb_diretores_3mais 
+vetor_diretores <- imdb_diretores_3mais$diretor
+
+# filtrar imdb caso o que estiver em diretor seja igual a um dos diretores constantes no vetor_diretores. 
+imdb_sub1 <- imdb %>% filter(diretor %in% vetor_diretores)
+```
+
+24. Entre os diretores com 3 filmes ou mais, qual tem maior média de nota_imdb?
+
+```{r eval=FALSE, include=FALSE}
+imdb_sub1 %>% group_by(diretor) %>% summarise(média_imdb = mean(nota_imdb)) %>% arrange(desc(média_imdb))
+```
+
+# Gráficos
+
+Para fazer os exercícios referentes à elaboração de gráficos, com o pacote ggplot2, vamos usar o dataframe `imdb`.
+
+25. Faça um gráfico de pontos representando o orçamento no eixo e a receita no eixo y. Coloque uma reta de regressão para identificar a tendência da associação.
+
+```{r}
+glimpse(imdb)
+
+ggplot(data = imdb, aes(x = orcamento, y = receita)) +
+  geom_point(color = "#61988E", shape = 16, size = 0.7) +
+  geom_smooth(method = "lm", se = F, color = "black", size = 0.5,) + 
+  labs(title = "Orçamento x Receita",
+       subtitle = "imdb",
+       x = "Orçamento",
+       y = "Receita")
+```
+
+26. Faça histogramas para as variáveis orçamento e receita.
+
+```{r}
+ggplot(data = imdb, aes(x = orcamento)) +
+  geom_histogram()
+
+ggplot(data = imdb) +
+  geom_histogram(aes(x = receita))
+```
+
+27. Construa um gráfico de barras com o número de filmes em cores e em preto e branco.
+
+```{r}
+ggplot(data = imdb, aes(x = cor, y = ..count..)) +
+  geom_bar()
+
+imdb %>% group_by(diretor) %>% summarise(média_orçamento = mean(orcamento), média_receita = mean(receita)) %>% arrange(desc(média_orçamento)) %>% slice(1:10) %>% 
+  ggplot(aes(x = diretor, y = média_orçamento)) +
+  geom_bar()
+```
+
+
+
