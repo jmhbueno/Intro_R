@@ -24,9 +24,9 @@ Foi concebido para ser colaborativo e gratuito.
 Qualquer pessoa pode criar uma função, ou um conjunto de funções (pacote) e disponibilizar a outros usuários... **gratuitamente**!
 Visite o o [site](https://cran.r-project.org/) do R e baixe o programa para instalação em seu computador.
 
-Em associação com o R, costuma-se usar o RStudio (baixe e instale clicando [aqui](https://www.rstudio.com/)), que facilita o uso do R ao disponibilizar um conjunto de quatro janelas que funcionam para as seguintes funções:
+Em associação ao R, costuma-se usar o RStudio (baixe e instale clicando [aqui](https://www.rstudio.com/)), que facilita o uso do R ao disponibilizar um conjunto de quatro janelas que funcionam para as seguintes funções:
 
-1)  a digitação de texto (superior, à esquerda),\
+1)  digitação de texto (superior, à esquerda),\
 2)  display de resultados (console) (inferior, à esquerda),\
 3)  visualizador de objetos (arquivos) gerados ao realizar um trabalho (superior, à direita),
 4)  informações gerais: arquivos, plotagens, pacotes instalados, help, e visualizador de imagens (inferior, à direita).
@@ -41,6 +41,8 @@ Você pode abrir quantas abas desejar.
 -   Selecionando-o e clicando em "Run" na aba superior da área de digitação.
 
 -   Colocar o cursor em qualquer ponto da linha de comando e apertar `CTRL+ENTER`.
+
+## Instalação e ativação de pacotes
 
 Algumas funções não precisam da instalação de pacotes, pois já vêm com o R.
 São funções básicas (base), como operações matemáticas, plotagem, estatísticas básicas, entre outras.
@@ -70,7 +72,7 @@ Todo pacote do R tem uma documentação, com informações sobre as funções qu
 Uma forma de encontrar essa documentação é no site [rdocumentation.org](rdocumentation.org).
 
 As funções contidas dentro dos pacotes ser acessadas digitando-se um ponto de interrogação (?) antes do nome da função.
-Por exemplo, se quisermos a documentação da função **hist** do pacote base do R, é só rodar o comando:
+Por exemplo, se quisermos a documentação da função **hist** da base do R, é só rodar o comando:
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 ?hist()
@@ -88,20 +90,20 @@ Atalho para esse operador: pressione simultaneamente as teclas `ALT` e `-`
 Esse operador indica que o resultado de uma operação será salva em um **objeto**.
 
 Por exemplo: o comando abaixo diz "*faça a soma de 3 com 4 e guarde o resultado num objeto chamado **soma**"*.
-Esse objeto aparecerá no environment (quadrante superior direito do RStudio).
+Esse objeto (soma) aparecerá no environment (quadrante superior direito do RStudio).
 
 ```{r}
 soma <- 3 + 4 
 ```
 
-O comando "\#" permite que você faça comentários, sem que o R o entenda como comando.
+O comando "#" permite que você faça comentários, sem que o R o entenda como comando.
 Por exemplo:
 
 ```{r}
 soma <- 3 + 4   # Esse comando calcula a soma de 3 + 4 e salva no objeto "soma"
 ```
 
-O texto que aparece após a \#, em outra cor (verde, azul, etc.), é ignorado pelo R.
+O texto que aparece após a #, em outra cor (verde, azul, etc.), é ignorado pelo R.
 Esses são os comandos mais básicos.
 Há muitos outros atalhos...
 
@@ -287,6 +289,11 @@ is.vector(sexo)
 # quando uma informação textual for inserida num objeto, ela tem que ir entre aspas.
 sexo_cod <- c("m","f","m","m","f") # vetor com informações sobre sexo
 
+# uma alternativa a isso é transformar a variável sexo em uma variável fator
+
+sexo <- factor(sexo, levels = c(1,2), labels = c("masculino", "feminino"))
+
+
 idade <- c(25,32,78,12,NA) # vetor com informações de idade
 
 # A partir dos dois vetores anteriores é possível criar um dataframe (conjunto de vetores)
@@ -304,7 +311,7 @@ df <- cbind(id,df)
 
 # Se quiser inserir um "s" antes do número de cada sujeito, podemos usar a função paste(), que concatena duas partes da informação que constar em uma coluna. Essa função diz: concatene um s com valores de 1 a 5, separados por nada.
 
-paste("s",1:5,sep="")
+paste("s",1:5,sep="_")
 id <- paste("s",1:5,sep="")
 
 # uma forma de salvar os resultados em uma nova variável diretamente no banco de dados é usando a função $ (cifrão). Quando digitamos o $ em seguida ao nome do objeto (dataframe), o R abre, automaticamente, abre uma janela de opções com as variáveis que existem no dataframe. Ao selecionar "id", por exemplo, os novos dados serão salvos SOBRE os dados existentes. Caso se queira CRIAR uma nova variável, basta digitar o nome de uma variável inexistente no dataframe.
@@ -342,6 +349,7 @@ df$renda_total <- df$renda + df$bonus
 
 # inserir a variável "Estado Civil"
 df$"Estado Civil" <- c("casado/a","solteiro/a","viúvo/a","solteiro/a","casado/a","casado/a")
+
 ```
 
 # Funções para visualização de dados
@@ -582,7 +590,11 @@ df1 %>% select(-4) # deletar a coluna estado_civil
 
 # usar select para reordenar as colunas
 
-df1 %>% select(5:9,1,3,2,4)
+df1 %>% select(5:9,1,3,2,4)  
+
+## OU
+
+df1 %>% select(5:9,everything())
 
 # vamos aproveitar e deletar as duas últimas colunas do df
 
@@ -594,9 +606,25 @@ df %>% select(-c(renda_cod,escola_cod))
 
 df <- df %>% select(-c(renda_cod,escola_cod))
 
-# reorganização do banco de dados
+# se quiser selecionar um grupo de variáveis que começam com as mesmas letras
 
-df %>% select(sexo,everything())
+df %>% select(starts_with("v"))
+df %>% select(starts_with(c("v","sum","mean")))
+
+# ou selecionar variáveis que terminam com as mesmas letras (ou números)
+
+df %>% select(ends_with("dade"))
+
+# seleção de variáveis usando operadores booleanos
+
+df %>% select(!ends_with("dade"))
+
+df %>% select(where(is.factor))
+
+df %>% select(where(is.numeric) & starts_with(c("s")))
+df %>% select(where(is.numeric) & starts_with(c("s","v")))
+
+#  
 ```
 
 ## filter()
@@ -671,7 +699,7 @@ df %>% arrange(sexo,desc(renda_total))
 
 A função `mutate()` permite criar variáveis dentro de um dataframe.
 É muito útil para calcular pontuações a partir de itens, por exemplo, ou para fazer transformações de outras variáveis.\
-\#\# mutate
+## mutate
 
 ```{r}
 # calcular as pontuações das pessoas nos itens de v1 a v5.
@@ -724,6 +752,94 @@ str(imdb)
 
 ```
 
+# Importar e exportar arquivos de/para outros formatos
+
+Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia. De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo. A seguir, veremos como fazer isso... 
+```{r}
+# Exportar arquivos
+
+# Carregar os pacotes readr
+### install.packages("readr")
+library(readr)
+
+
+
+## Usando funções do pacote utils
+
+write.csv(df1,               # dataframe a ser exportado
+          "df1.csv",         # nome a ser dado ao dataframe exportado
+          sep = ",",         # caractere que separa as colunas
+          na = "NA",         # como codificar dados faltantes
+          dec = ".",         # que caractere usar para separar casas decimais
+          col.names = TRUE)  # informar se Há (TRUE) ou não (FALSE) nome das colunas no dataframe
+
+write.csv2(df1,              # semelhante ao comando anterior, mas assumindo sep = ";" e dec = ","
+          "df1.csv",         
+          sep = ";",                
+          na = "NA",       
+          dec = ",",       
+          col.names = TRUE)
+
+### OBS.: Essas funções podem ser resumidas para...
+write.csv(df1, "df1.csv")
+
+## Usando funções do pacote readr
+
+write_csv(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE)
+
+write_csv2(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE)
+
+write_excel_csv(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE,
+  delim = ",")
+
+write_excel_csv2(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE,
+  delim = ";")
+
+
+# Importando arquivos em .csv
+
+## Usando o pacote utils
+?read.csv()
+
+#### read.csv(df.csv, header = TRUE, sep = ",", dec = ".", encoding = "UTF-8")
+read.csv2("df.csv",             # nome do arquivo a ser importado (OBS. deve estar no diretório de trabalho)
+          header = TRUE,        # TRUE, para arquivos com nomes das colunas
+          sep = ";",            # caractere separador das colunas
+          dec = ",",            # caractere separador de casas decimais.
+          encoding = "UTF-8")   # usar codificação UTF-8 para que os acentos, etc. venham de forma correta.
+
+## Usando o pacote readr
+
+read_csv2("df.csv", col_names = TRUE, na = "NA",skip_empty_rows = TRUE)
+
+## Usando o pacote readxl para importar arquivos em excel
+library(readxl)
+
+read_excel("df.xlsx", col_names = TRUE)
+
+## Usando o pacote haven para importar arquivos do SPSS
+
+install.packages("haven")
+library(haven)
+
+read_sav("df.sav")
+```
 # Funções estatísticas básicas
 
 É possível falzer algumas operações matemáticas e de estatística descritiva, com as funções básicas do R.
@@ -767,8 +883,7 @@ df %>% count(sexo,escolaridade) %>% mutate(porc = n/sum(n)*100)
 
 A função `rowMeans()` calcula a média de algumas variáveis em uma **linha**.\
 Se quisermos calcular a média e o desvio padrão dos valores de uma **coluna** (variável), temos que usar as funções `mean()` e `sd()`.\
-Outras medidas de tendência central são a mediana e a moda
-.
+Outras medidas de tendência central são a mediana e a moda .
 
 ```{r}
 # média das pontuações as variáveis "idade", "renda_total", "escore".
