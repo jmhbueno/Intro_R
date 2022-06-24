@@ -721,6 +721,18 @@ df %>% group_by(sexo) %>% summarise(mean(escore))
 df %>% group_by(sexo,escolaridade) %>% summarise(mean(escore))
 ```
 
+## rename
+Às vezes, é necessário renomear uma ou mais variáveis de um dataframe. Para isso, podemos usar a função `rename()` do dyplr.
+```{r}
+df %>% rename(item1 = v1,
+              item2 = v2,
+              item3 = v3,
+              item4 = v4,
+              item5 = v5)
+
+```
+
+
 ## pivot_longer e pivot_wider (funções tidyr)
 
 Às vezes precisamos fazer transformações no formato do banco de dados para fazer alguma análise estatística ou gráfico.
