@@ -370,11 +370,20 @@ df <- df_copia
 ```
 
 # Funções para manipulação de dados
+Muitas vezes, precisamos manipular os dados de um dataframe, seja para renomear colunas, selecionar linhas ou colunas, adicionar variáveis ou sujeitos, entre outras. Vejamos algumas delas.
+
+## Alteração do nome de variáveis
 
 ```{r}
 # Alterar o nome da variável "sexo_cod"
 df <- rename(df,sexo = sexo_cod)
 
+# Alterar o nome da variável "Estado Civil"
+df <- rename(df,estado_civil = "Estado Civil")
+```
+
+## Selecionar linhas e colunas
+```{r}
 # Selecionar linhas e colunas: dataframe[linhas,colunas]
 
 df[1:3, ] # seleção das três primeiras linhas
@@ -388,18 +397,27 @@ df[c(1,3,5), ]
 df[ ,c(1,3,7)]
 df[ ,c("id","idade","renda_total")]
 df[ ,c("renda_total","idade","id")]
+```
 
+## Filtrar linhas inteiras 
+```{r}
 # Selecionar somente as linhas dos participantes do sexo masculino
 df[df$sexo == "m",  ]
 
 # Selecionar somente as linhas dos participantes do sexo masculino com renda_total maior ou igual a 2500 reais.
 df[df$sexo == "m" & df$renda_total >= 2500, ]
+```
 
+## Alterar o conteúdo dentro de uma variável
+```{r}
 # Alterar o conteúdo dentro de uma variável
 
 df$sexo[df$sexo == "f"] <- 0
 df$sexo[df$sexo == "m"] <- 1
+```
 
+## Alterar o formato de variáveis
+```{r}
 # visualisar que a variável sexo está como character, mas também foi possível perceber que outras variáveis também não estão no formato ideal. Vamos acertar todas elas.
 glimpse(df)
 str(df)
@@ -411,41 +429,36 @@ df$sexo <- as.factor(df$sexo) # factor é uma variável nominal
 
 # df$idade <- as.numeric(df$idade)
 df$escolaridade <- as.factor(df$escolaridade)
+```
 
+## Atribuir níveis às variáveis de fator
+```{r}
 # atribuir levels aos valores 0 e 1 da variável sexo
 levels(df$sexo) <- c("feminino","masculino")
 levels(df$escolaridade) <- c("fundamental","médio","superior")
+```
 
-# Alterar o nome da variável "Estado Civil"
-df <- rename(df,estado_civil = "Estado Civil")
-
+## Alterar a ordem das variáveis no dataframe
+```{r}
 # Alterar a ordem das variáveis no banco de dados
 df <- df[ ,c("id","sexo","idade","escolaridade","estado_civil",
              "renda","bonus","renda_total")]
+```
 
-# importar uma planilha do excel
-# read_xlsx("Variables.xlsx") # assim, o R importa mas não salva como objeto
-
+## Combinar dataframes
+```{r include=FALSE}
+# importar planilha para o objetivo variables
 variables <- read_xlsx("Variables.xlsx")
+```
 
-df <- cbind(df,read_xlsx("variables.xlsx"))
-view(df)
-
-# cbind(df,read_xlsx("Variables.xlsx"))
-
+Nesse caso, temos o dataframe `variables`, com a informação de cinco variáveis dos mesmos sujeitos que constam no dataframe `df`. Então, gostaríamos de juntar esses dois dataframes. Para isso podemos usar duas funções. 
+```{r}
 # Juntar a planilha importada no dataframe df
-#df <- cbind(df,variables)
+df <- cbind(df,variables)
+```
 
-# Exportar dataframes para diversos formatos
-
-# df_copia2 <- df
-# df <- df_copia2
-
-saveRDS(df,"df.rds") # formato reconhecido pelo R
-write_csv2(df, "df.csv")
-writexl::write_xlsx(df,"df.xlsx")
-
-view(df)
+## Atribuição de labels 
+```{r}
 # Atribuir labels às variáveis v1 a v5
 # vamos supor que essa variávels correspondessem às seguintes perguntas:
 # v1 = Você costuma se atrasar para as aulas?
@@ -504,10 +517,10 @@ ifelse(df$sexo == "masculino" & df$escolaridade == "fundamental" | df$estado_civ
 df$escola_cod <- ifelse(df$escolaridade == "fundamental",1,
                         ifelse(df$escolaridade == "médio",2,3))
 
-df$v1 <- ifelse(df$v1 == 1,5,
-                ifelse(df$v1 == 2,4,
-                       ifelse(df$v1 == 3,3,
-                              ifelse(df$v1 == 4,2,1))))
+ifelse(df$v1 == 1,5,
+       ifelse(df$v1 == 2,4,
+              ifelse(df$v1 == 3,3,
+                     ifelse(df$v1 == 4,2,1))))
 
 # Também é possível recodificar variáveis de jeito mais fácil, usando uma função do pacote expss.
 # Note que há questões no sentido de uma boa adaptação aos estudos e frases no sentido contrário. Nesses casos, não podemos somar os itens diretamente porque um valor 5 em v1 significa má adaptação, enquanto o mesmo valor 5  significa boa adaptação em v2. Então, não podemos somar coisas que têm significados diferentes.
@@ -596,6 +609,14 @@ df1 %>% select(5:9,1,3,2,4)
 
 df1 %>% select(5:9,everything())
 
+# Outras possibilidades
+
+df %>% select(contains("sum"))
+
+df %>% select(ends_with("dade"))
+
+df %>% select(starts_with("v"))
+
 # vamos aproveitar e deletar as duas últimas colunas do df
 
 names(df)     # ver o nome e o número das colunas, para identificar que as duas últimas                  colunas são a 14 e a 15.
@@ -624,7 +645,6 @@ df %>% select(where(is.factor))
 df %>% select(where(is.numeric) & starts_with(c("s")))
 df %>% select(where(is.numeric) & starts_with(c("s","v")))
 
-#  
 ```
 
 ## filter()
@@ -707,6 +727,11 @@ df %>% mutate(escore = v1+v2+v3+v4+v5)
 df %>% mutate(escore = (v1+v2+v3+v4+v5)/5)
 # se quisermos salvar a nova variável, então o código seria...
 df <- df %>% mutate(escore = v1+v2+v3+v4+v5)
+
+# remover label da variável escore
+escore <- unvr(df$escore)
+df$escore <- escore
+glimpse(df)
 ```
 
 ## group_by
@@ -722,17 +747,135 @@ df %>% group_by(sexo,escolaridade) %>% summarise(mean(escore))
 ```
 
 ## rename
-Às vezes, é necessário renomear uma ou mais variáveis de um dataframe. Para isso, podemos usar a função `rename()` do dyplr.
+
+Às vezes, é necessário renomear uma ou mais variáveis de um dataframe.
+Para isso, podemos usar a função `rename()` do dyplr.
+
 ```{r}
 df %>% rename(item1 = v1,
               item2 = v2,
               item3 = v3,
               item4 = v4,
               item5 = v5)
-
 ```
 
+## Combinação de variáveis (left_join, right_join, inner_join, full_join, semi_join, anti_join)
 
+Num primeiro caso, vamos combinar dois data frames com o mesmo número de linhas e colunas.
+Para isso, é necessário ter pelo menos uma variável em comum nos dois bancos de dados.
+Esssa variável será usada pela função para combinar os dois dataframes.
+
+```{r}
+## criando df2 para combinar com df
+df2 <- 
+data.frame(id = c("s1","s2","s3","s4","s5","s6"),
+           Trabalho = c(1,1,0,0,1,1),
+           Filhos = c(0,1,1,0,1,1),
+           renda_total = c(1500,2000,2500,3000,3500,4000))
+
+left_join(df,df2) # Para salvar o novo dataframe, teríamos que apontar a função para um novo objeto.
+```
+
+Note que a função reconheceu duas variáveis em comum (id e renda_total) e sinalizou isso dizendo `Joining, by = c("id", "renda_total")` no início dos resultados.
+Mas, muitas vezes a situação é mais complexa. Podemos ter um segundo dataframe com informações adicionais de apenas **ALGUNS** participantes que estão no primeiro dataframe. Além disso, podemos ter participantes adicionais, que não estão no primeiro dataframe.
+
+```{r}
+# Não temos mais os participantes s2 e s4 e temos outros participantes (s7 a s10), que não estão em df
+df2 <- 
+data.frame(id = c("s1","s3","s5","s6","s7","s8","s9","s10"),
+           Trabalho = c(1,0,1,1,1,0,1,0),
+           Filhos = c(0,1,1,1,0,0,1,1))
+
+left_join(df,df2)
+```
+
+Observe que somente os **DADOS EM COMUM** foram para o novo dataframe. Ou seja, participantes que não constavam em df não foram acrescentados e informações não disponíveis em df2 sobre participantes de df foram registradas como `NA`. A função chama-se `left_join` exatamente por tomar o dataframe à esquerda (o primeiro) como referência para fazer as alterações.  
+Se quisermos usar o segundo dataframe como referência (df2), podemos usar a função `right_join`
+
+```{r}
+right_join(df,df2)
+```
+
+Caso se queira apenas as informações que constem **em ambos os dataframes**, pode-se usar a função `inner_join`.
+```{r}
+inner_join(df,df2)
+```
+Caso se queira a **JUNÇÃO COMPLETA DOS DOIS DATAFRAMES**, pode-se usar a função `full_join`.
+```{r}
+full_join(df,df2)
+```
+Caso a variável comum esteja com nomes diferentes nos dois dataframes, basta acrescentar essa informação ao comando.
+```{r}
+df2 <- 
+data.frame(Participantes = c("s1","s3","s5","s6","s7","s8","s9","s10"),
+           Trabalho = c(1,0,1,1,1,0,1,0),
+           Filhos = c(0,1,1,1,0,0,1,1))
+
+left_join(df,df2, by = c("id" = "Participantes"))
+```
+A função `semi_join` pode ser empregada para filtrar as observações (linhas) de df que possuem correspondência em df2.
+```{r}
+semi_join(df,df2, by = c("id" = "Participantes"))
+```
+Note que nenhuma variável é acrescentada, mas o dataframe é reduzido para apenas as observações de df que apresentam todas as informações em df2. 
+O contrário também pode ser obtido, ou seja, as informações de df que NÃO APRESENTAM CORRESPONDÊNCIA em df2. Para isso, devemos usar a função `anti_join`.
+```{r}
+anti_join(df,df2, by = c("id" = "Participantes"))
+```
+
+## Combinação de observações (union, setdiff, intersect, bind_rows)
+
+O dataframe `df3` contém cinco observações (s6 a s10) compatíveis com as variáveis de `df`. sendo que as informações do sujeito s6 estão repetidas em ambos os dataframes.
+```{r include=FALSE}
+df3 <- 
+  data.frame(id = c("s6","s7","s8","s9","s10"),
+             sexo = c("masculino","feminino","masculino","masculino","feminino"),
+             idade = c(34,55,43,39,15),
+             escolaridade = c("superior","superior","médio","fundamental","médio"),
+             estado_civil = c("casado/a","casado/a","casado/a","casado/a","casado/a"),
+             renda = c(3500,2500,1000,1500,4000),
+             bonus = c(rep(500,5)),
+             renda_total = c(4000,3000,1500,2000,4500),
+             v1 = c(2,2,1,3,1),
+             v2 = c(5,3,2,1,1),
+             v3 = c(3,2,2,1,5),
+             v4 = c(5,2,2,3,1),
+             v5 = c(3,1,2,4,5))
+
+df3$escore <- df3 %>% select(v1:v5) %>% rowSums()
+
+# Atribuir labels às variáveis v1 a v5
+
+df3  <- apply_labels(df3,
+       v1 = "Você costuma se atrasar para as aulas?",
+       v2 = "Quanto você confia na sua capacidade de aprender?",
+       v3 = 'Quão bem você se relaciona com outras pessoas na sua escola?',
+       v4 = 'Quanto você gosta de sua escola?',
+       v5 = 'Quanto você procrastina para estudar?')
+glimpse(df)
+glimpse(df3)
+```
+
+Para unir todas as observações de df e df3 podemos usar a função `union`.
+```{r}
+union(df,df3)
+```
+
+Para selecionar somente as observações em comum nos dois dataframes, podemos usar a função `intersect`.
+```{r}
+intersect(df,df3)
+```
+
+Para selecionar somente as observações únicas de df, podemos usar a função `setdiff`.
+```{r}
+setdiff(df,df3)
+```
+
+Para unir os dataframes df e df3, mas colocando uma identificação de onde veio cada observação, podemos usar `bind_rows`.
+```{r}
+bind_rows(df,df3,.id="grupo")
+```
+Note, porém, que a saída incluiu duas vezes o sujeito s06, porque a função bind_rows simplesmente une os dois dataframes, sem fazer nenhum tipo de concatenação entre eles. 
 ## pivot_longer e pivot_wider (funções tidyr)
 
 Às vezes precisamos fazer transformações no formato do banco de dados para fazer alguma análise estatística ou gráfico.
@@ -766,7 +909,10 @@ str(imdb)
 
 # Importar e exportar arquivos de/para outros formatos
 
-Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia. De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo. A seguir, veremos como fazer isso... 
+Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia.
+De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo.
+A seguir, veremos como fazer isso...
+
 ```{r}
 # Exportar arquivos
 
@@ -774,7 +920,9 @@ Há vários pacotes para importação de arquivos elaborados em outros programas
 ### install.packages("readr")
 library(readr)
 
+## Usando função da base
 
+saveRDS(df,"df.rds") # formato reconhecido pelo R
 
 ## Usando funções do pacote utils
 
@@ -852,6 +1000,7 @@ library(haven)
 
 read_sav("df.sav")
 ```
+
 # Funções estatísticas básicas
 
 É possível falzer algumas operações matemáticas e de estatística descritiva, com as funções básicas do R.
