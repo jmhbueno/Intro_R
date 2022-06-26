@@ -477,7 +477,20 @@ df  <- apply_labels(df,
 
 str(df)
 glimpse(df)
-view(df)
+#view(df)
+```
+## Lidando com dados ausentes
+A função `na.omit` deleta as informações de uma linha inteira que contenha ao menos uma informação ausente.  
+A função `na.exclude` faz quase a mesma coisa, mas apenas omite a linha e acaba reportando alguns resultados, como resíduos, por exemplo, em análises de regressão. Além disso, também preserva o número de linhas do dataframe. Isso é importante em certas ocasiões que se deseja manter constante o número de linhas de um dataframe para coincidir com outro dataframe, por exemplo.  
+```{r}
+na.omit(df)
+na.exclude(df)
+```
+
+Outra função bastante empregada é a `na.rm`, que normalmente é usada dentro de funções estatísticas para sinalizar que os valores NA devem ser ignorados.
+```{r}
+# mean(df$idade)    # essa função acaba não rodando, porque entre os dados de idade existe um NA
+mean(df$idade,na.rm = TRUE) # dessa forma, conseguimos rodar a análise.
 ```
 
 # Função `ifelse()`
@@ -532,11 +545,119 @@ recode(df[ ,c("v1","v2","v3","v4","v5")]) <- c(1~5,2~4,3~3,4~2,5~1)
 recode(df[ ,c("v1","v5")]) <- c(1~5,2~4,3~3,4~2,5~1)
 ```
 
-# Pacote tidyverse
+# Importar e exportar arquivos de/para outros formatos
+
+Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia.
+De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo.
+A seguir, veremos como fazer isso, começando pela **exportação de arquivos**.
+## Exportação de arquivos
+### Usando função da base
+```{r}
+
+saveRDS(df,"df.rds") # formato reconhecido pelo R
+```
+
+### Usando funções do pacote utils
+```{r}
+
+# write.csv(df1,               # dataframe a ser exportado
+#           "df1.csv",         # nome a ser dado ao dataframe exportado
+#           sep = ",",         # caractere que separa as colunas
+#           na = "NA",         # como codificar dados faltantes
+#           dec = ".",         # que caractere usar para separar casas decimais
+#           col.names = TRUE)  # informar se Há (TRUE) ou não (FALSE) nome das colunas no dataframe
+
+# write.csv2(df1,              # semelhante ao comando anterior, mas assumindo sep = ";" e dec = ","
+#           "df1.csv",         
+#           sep = ";",                
+#           na = "NA",       
+#           dec = ",",       
+#           col.names = TRUE)
+
+### OBS.: Essas funções acima podem ser resumidas para...
+write.csv(df1, "df1.csv")
+write.csv2(df1, "df1.csv")
+```
+
+### Usando funções do pacote readr
+```{r}
+# Carregar os pacotes readr
+if(!require(readr)) install.packages("readr")
+library(readr)
+
+write_csv(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE)
+
+write_csv2(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE)
+
+write_excel_csv(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE,
+  delim = ",")
+
+write_excel_csv2(
+  df1,
+  "df1.csv",
+  na = "NA",
+  col_names = TRUE,
+  delim = ";")
+```
+
+## Importação de arquivos
+
+### Importando arquivos em `.csv` com o pacote `utils`
+```{r}
+# Importando arquivos em .csv
+
+## Usando o pacote utils
+
+#### read.csv(df.csv, header = TRUE, sep = ",", dec = ".", encoding = "UTF-8")
+read.csv2("df.csv",             # nome do arquivo a ser importado (OBS. deve estar no diretório de trabalho)
+          header = TRUE,        # TRUE, para arquivos com nomes das colunas
+          sep = ";",            # caractere separador das colunas
+          dec = ",",            # caractere separador de casas decimais.
+          encoding = "UTF-8")   # usar codificação UTF-8 para que os acentos, etc. venham de forma correta.
+```
+
+### Importando arquivos em `.csv` com o pacote `readr`
+```{r}
+## Usando o pacote readr
+
+read_csv2("df.csv", col_names = TRUE, na = "NA",skip_empty_rows = TRUE)
+```
+
+### Importando arquivos em `.xls` e `.xlsx` (Excel) com o pacote `readxl`
+```{r}
+## Usando o pacote readxl para importar arquivos em excel
+library(readxl)
+
+read_excel("df.xlsx", col_names = TRUE)
+```
+
+### Importando arquivos em `.sav` (SPSS) com o pacote `haven`
+```{r}
+## Usando o pacote haven para importar arquivos do SPSS
+
+if(!require(haven)) install.packages("haven")
+library(haven)
+
+read_sav("df.sav")
+```
+
+# Pacote `tidyverse`
 
 O `tidyverse` é uma família de pacotes que compartilham a mesma filosofia e linguagem de programação.
-Fazem parte dessa família pacotes como o `dplyr`, o `readr` e o `ggplot2`, entre outros.
-O `dplyr` é um pacote com funções para a **manipulação de dados**, O `ggplot2` é um pacote poderoso para fazer **gráficos** e o `readr` permite a importação e exportação de dados.
+Fazem parte dessa família pacotes como o `dplyr`, o `tidyr`, o `readr` e o `ggplot2`, entre outros.
+O `dplyr` e o `tidyr` são pacotes com funções para a **manipulação de dados**, O `ggplot2` é um pacote poderoso para fazer **gráficos** e o `readr` permite a importação e exportação de dados.
 
 Uma função básica do Tidyverse é a **função pipe** `%>%`, que se obtém pressionando as teclas `CTRL+SHIFT+M`.
 Essa função pode ser interpretada como "então" e permite escrever códigos na sequência em que ocorrem.
@@ -556,7 +677,8 @@ Na sintaxe acima, usamos algumas funções que serão discutidas a seguir, mas �
 Em português, esse código ficaria assim: pegue o dataframe df, **então** agrupe pela variável sexo, **então** calcule as médias de idade.
 Esse comando ajuda bastante a escrever códigos mais complexos.
 
-O tidyverse também apresenta diversos recursos para manipulação de dados, entre os quais estão:
+# Pacote `dplyr`
+Esse pacote da família `tidyverse` apresenta um conjunto de funções que permite selecionar variáveis, filtrar observações, selecionar linhas, organizar apresentação de resultados, criar e/ou modificar variáveis, agrupar variáveis, entre outras. Esses comandos são conhecidos como os **verbos do dplyr**. 
 
 ```{r echo=FALSE}
 tidyverse_table <- data.frame("Funções tidyverse(dplyer)"=c(
@@ -685,7 +807,7 @@ Ou selecionar um *subset* do banco de dados, que contenha os sujeitos de interes
 
 ## slice()
 
-Uma opção para selecionar casos com base na linha inteira é a função slice().
+Uma opção para selecionar casos com base na linha inteira é a função `slice()`.
 
 ```{r}
 # selecionar linhas inteiras
@@ -907,455 +1029,49 @@ str(imdb)
 
 ```
 
-# Importar e exportar arquivos de/para outros formatos
+# Pacote `tidyr`
+O pacote `tidyr` também pertence à família `tidyverse` e apresenta algumas funções que facilitam a manipulação de variáveis, na maioria das vezes, envolvendo todo o dataframe.  
 
-Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia.
-De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo.
-A seguir, veremos como fazer isso...
-
+## Eliminar valores ausentes com a função `drop_na`
+Função semelhante a na.omit, mas que permite informar em quais variáveis se quer verificar a existência de valores ausentes.
 ```{r}
-# Exportar arquivos
+# utilização genérica da função
+df %>% drop_na()
 
-# Carregar os pacotes readr
-### install.packages("readr")
-library(readr)
-
-## Usando função da base
-
-saveRDS(df,"df.rds") # formato reconhecido pelo R
-
-## Usando funções do pacote utils
-
-write.csv(df1,               # dataframe a ser exportado
-          "df1.csv",         # nome a ser dado ao dataframe exportado
-          sep = ",",         # caractere que separa as colunas
-          na = "NA",         # como codificar dados faltantes
-          dec = ".",         # que caractere usar para separar casas decimais
-          col.names = TRUE)  # informar se Há (TRUE) ou não (FALSE) nome das colunas no dataframe
-
-write.csv2(df1,              # semelhante ao comando anterior, mas assumindo sep = ";" e dec = ","
-          "df1.csv",         
-          sep = ";",                
-          na = "NA",       
-          dec = ",",       
-          col.names = TRUE)
-
-### OBS.: Essas funções podem ser resumidas para...
-write.csv(df1, "df1.csv")
-
-## Usando funções do pacote readr
-
-write_csv(
-  df1,
-  "df1.csv",
-  na = "NA",
-  col_names = TRUE)
-
-write_csv2(
-  df1,
-  "df1.csv",
-  na = "NA",
-  col_names = TRUE)
-
-write_excel_csv(
-  df1,
-  "df1.csv",
-  na = "NA",
-  col_names = TRUE,
-  delim = ",")
-
-write_excel_csv2(
-  df1,
-  "df1.csv",
-  na = "NA",
-  col_names = TRUE,
-  delim = ";")
-
-
-# Importando arquivos em .csv
-
-## Usando o pacote utils
-?read.csv()
-
-#### read.csv(df.csv, header = TRUE, sep = ",", dec = ".", encoding = "UTF-8")
-read.csv2("df.csv",             # nome do arquivo a ser importado (OBS. deve estar no diretório de trabalho)
-          header = TRUE,        # TRUE, para arquivos com nomes das colunas
-          sep = ";",            # caractere separador das colunas
-          dec = ",",            # caractere separador de casas decimais.
-          encoding = "UTF-8")   # usar codificação UTF-8 para que os acentos, etc. venham de forma correta.
-
-## Usando o pacote readr
-
-read_csv2("df.csv", col_names = TRUE, na = "NA",skip_empty_rows = TRUE)
-
-## Usando o pacote readxl para importar arquivos em excel
-library(readxl)
-
-read_excel("df.xlsx", col_names = TRUE)
-
-## Usando o pacote haven para importar arquivos do SPSS
-
-install.packages("haven")
-library(haven)
-
-read_sav("df.sav")
+# informando que só desejo eliminar as observações que continerem NA nas variáveis v1 a v5
+df %>% drop_na(v1:v5)
 ```
 
-# Funções estatísticas básicas
-
-É possível falzer algumas operações matemáticas e de estatística descritiva, com as funções básicas do R.
-Algumas vezes temos que calcular pontuações a partir da somatória ou da média dos valores atribuídos pelos respondentes aos itens.
-
-## rowSums() e rowMeans()
-
-```{r}
-## calcular pontuações das pessoas em um conjunto de itens.
-## vamos supor que v1, v2 e v5 formam a pontuação em um fator
-## e que v3 e v4 formam a pontuação em outro fator
-
-## se quisermos calcular a somatória das pontuações nesses dois fatores, podemos usar:
-df %>% select(v1,v2,v5) %>% rowSums()
-## para salvar esses resultados em uma nova coluna no dataframe df, basta usar df$nome
-df$sum1 <- df %>% select(v1,v2,v5) %>% rowSums()
-df$sum2 <- df %>% select(v3,v4) %>% rowSums()
-
-## podemos calcular essas pontuações pela média nos itens ao invés da somatória
-df$mean1 <- df %>% select(v1,v2,v5) %>% rowMeans() %>% round(digits = 1)
-df$mean2 <- df %>% select(v3,v4) %>% rowMeans()
-```
-
-## count()
-
-```{r}
-# contar casos dentro de uma variável. 
-# Função útil, por exemplo, para descrever a amostra.
-# dependendo de como se escreve essa função ela dá um tipo de informação.
-
-count(df) # se colocar apenas o nome do dataframe, retorna o número de casos total
-count(df,sexo) # especificando uma varíável, retorna o número de casos dentro da variável
-count(df,sexo,escolaridade) # comando igual a df %>% group_by(sexo) %>% count(escolaridade)
-
-# para acrescentar uma coluna com as respectivas porcentagens
-df %>% count(sexo) %>% mutate(porc = n/sum(n)*100)
-df %>% count(sexo,escolaridade) %>% mutate(porc = n/sum(n)*100)
-```
-
-## Estatísticas de tendência central e de disperção
-
-A função `rowMeans()` calcula a média de algumas variáveis em uma **linha**.\
-Se quisermos calcular a média e o desvio padrão dos valores de uma **coluna** (variável), temos que usar as funções `mean()` e `sd()`.\
-Outras medidas de tendência central são a mediana e a moda .
-
-```{r}
-# média das pontuações as variáveis "idade", "renda_total", "escore".
-mean(df$idade)
-
-# ao rodar essa análise, notei que a variável "idade" está como character
-# ou seja, os valores numéricos estão sendo entendidos como texto
-# então, precisamos fazer uma transformação dessa variável em numérica.
-
-df$idade <- as.numeric(as.character(df$idade))
-
-# agora, rodar novamente a média
-mean(df$idade, na.rm = TRUE) # na coluna idade, há um valor de idade não informado (NA)
-                             # o comando precisa informar que os NAs devem ser removidos
-                             # por isso o comando "na.rm = TRUE"
-
-# procedimento semelhante para o cálculo do desvio padrão.
-sd(df$idade, na.rm = TRUE)
-
-# mediana
-median(df$idade,na.rm = TRUE)
-
-# moda
-count(df,escore)
-```
-
-# Gráficos
-
-O pacote ggplot2 é um dos que integram a família tidyverse.
-Ele foi estruturado segundo a Gramática dos Gráficos, em que os comandos são dados por camadas.
-As três principais camadas são **dados**, **estética** e **geom**.
-Para realizar as próximas análises iremos utilizar o banco de dados `big_five.rds`, que terá que ser importado para o R.
-Esse banco contém as respostas de 19.719 participantes que responderam a 50 itens relacionados aos cinco grandes fatores de personalidade (extroversão, neuroticismo, cosncienciosidade, amabilidade e abertura).
-Se você tem um email institucional da UFPE, [clique aqui para baixar o arquivo](https://drive.google.com/file/d/1JEGTkN3T66ubSSVROPVuao9oF9XAzII3/view?usp=sharing).
-**Salve-o na mesma pasta do R que estão os arquivos utilizados neste disciplina**.
-Se não tem o email institucional, o arquvio está disponível em formato `.csv` [nesta página](https://openpsychometrics.org/_rawdata/).
-
-## Preparação do banco de dados
-
-Para importar o arquivo `big_five.rds` para dentro do R usamos a função `read_rds()` do pacote `readr`.
-Para não ter que instalar e carregar esse pacote vamos chamar a função de dentro do pacote usando o script abaixo.
-
-```{r}
-# importar o arquivo big_five.rds para dentro do R
-
-big_five <- readr::read_rds("big_five.rds")
-
-
-# Seleção de uma pequena parte (20 sujeitos) do banco de dados big_five, para ficar visualmente mais interessante.
-
-big_five20 <- big_five %>% slice(1:20)
-```
-
-## Gráficos de pontos
-
-Num gráfico de pontos, cada ponto representa a interseção entre as variáveis x e y de cada caso.
-No exemplo a seguir, o gráfico de pontos representa as intersecções entre as variáveis extroversão e amabilidade.
-Cada ponto representa uma pessoa.
-De cada ponto é possível projetar perpendiculares aos eixos x e y, correspondentes às pontuações dessa pessoa nas variáveis extroversão e amabilidade, respectivamente.
-
-Então, a tradução do script abaixo ficaria assim: use o pacote ggplot2 (`ggplot`) e o dataframe big_five20 (`data = big_five20`) para criar um gráfico de pontos (`geom_point`), em que os eixos x e y são representados pelos valores dispostos nas variáveis extroversão e amabilidade (`aes(x = extr, y = amab)`), respectivamente.
-
-```{r}
-ggplot(data = big_five20) +
-    geom_point(aes(x = extr, y = amab))
-```
-
-Obs: para uma melhor visualização do gráfico, neste caso, usamos o dataframe `big_five20`, que contém apenas os 20 primeiros casos do dataframe `big_five`.
-
-## Histograma
-
-Um histograma representa a distribuição dos valores em uma variável.
-No eixo x estão os valores que aparecem na variável sob consideração (no caso, fizemos uma gráfico para cada um dos cinco grandes fatores de personalidade); no eixo y está a frequência com que cada valor de x aparece na amostra.
-Como o eixo y é sempre a frequencia, no caso do histograma `(geom_histogram`), precisamos definir apenas a variável que entrará no eixo x.
-
+## Substituir valores ausentes com a função `replace_na`
 ```{r}
 
-ggplot(data = big_five, aes(x = extr)) +
-  geom_histogram()
+df %>% replace_na(list(idade = 0))
+df %>% replace_na(list(idade = "não informado"))
+df %>% replace_na(list(idade = mean(idade, na.rm = TRUE)))
 ```
 
-No histograma da variável extroversão, acima, observa-se que há poucos escores baixos (próximos de 1 no eixo x) e altos (próximos de 5 no eixo x) e muitas pessoas com escores ao redor de 3.
-Note que a distribuição se aproxima de uma distribuição normal.
-Pode-se aplicar scripts semelhantes para a obtenção de histogramas dos outros quatro fatores.
+## Separar uma variável em duas colunas
 
 ```{r}
-ggplot(data = big_five, aes(x = neur)) +
-  geom_histogram()
+# paste("s",1:5,sep="")
+# seq(1000,by=500,length=6)
+# Criando um banco com informações para serem separadas.
+df4 <- df %>% mutate(cod = paste(id,c(2012,2011,2015,2011,2013,2014),sep = "/"))
 
-ggplot(data = big_five, aes(x = amab)) +
-  geom_histogram()
-
-ggplot(data = big_five, aes(x = cons)) +
-  geom_histogram()
-
-ggplot(data = big_five, aes(x = aber)) +
-  geom_histogram()
+# para separar o código do sujeito e o ano de entrada podemos usar a função separate
+df4 %>% separate(cod, sep = "/", into = c("cod_suj","ano_de_entrada"))
 ```
-
-## Gráfico de barras
-
-O gráfico de barras (`geom_bar`) é um gráfico com barras retangulares e comprimento proporcional aos valores que ele apresenta.
-Nos exemplos abaixo, as barras representam a quantidade de pessoas (`..count..`) por gênero (primeiro gráfico) ou por raça (segundo gráfico)
-
+No caso acima, a variável cod tinha um separador das informações: a barra. Mas há casos em que não se tem nem isso.
 ```{r}
-ggplot(data = big_five, aes(x = gênero, y = ..count..)) +
-  geom_bar()
+# recriando df4 com três informações na última coluna
+# Os dois prmeiros caracteres informam o código do sujeito
+# os quatro caracteres seguintes informam o ano de entrada
+# o último caractere informa a ordem de registro
 
-ggplot(data = big_five, aes(x = raça, y = ..count..)) +
-  geom_bar()
+df4 <- df %>% mutate(cod = paste(id,c(2012,2011,2015,2011,2013,2014),c(3,1,5,2,6,4),sep = ""))
+
+# para separar devemos identificar que os caracteres 2 e 6 são os últimos do primeiro e segundo blocos, respectivamente.
+
+df4 %>% separate(cod, sep = c(2,6), into = c("cod_suj","ano_de_entrada","ordem_de_entrada"))
 ```
 
-## Boxplot
-
-O boxplot, também chamado de diagrama de caixa é um gráfico que representa a variação de dados por meio de quartis.
-A haste inferior à caixa representa o primeiro quartil; a caixa representa os quartis 2 e 3, que estão separados pelo traço central correspondente à mediana; e a haste superior à caixa, representa a distribuição dos valores no quarto quartil.
-Assim, é preciso definir as variáveis que vão em x e y, sendo que y sempre deve ser uma variável contínua.
-
-```{r}
-ggplot(data = big_five, aes(x = gênero, y = extr)) +
-  geom_boxplot()
-
-ggplot(data = big_five, aes(x = gênero, y = cons)) +
-  geom_boxplot()
-
-ggplot(data = big_five, aes(x = gênero, y = neur)) +
-  geom_boxplot()
-
-ggplot(data = big_five, aes(x = gênero, y = amab)) +
-  geom_boxplot()
-
-ggplot(data = big_five, aes(x = gênero, y = aber)) +
-  geom_boxplot()
-```
-
-## Gráfico de linhas
-
-Se assemelha a um gráfico de pontos, em que os pontos não estão exatamente dispersos em um plano, mas organizados em uma sequência, o que permite que eles sejam ligados por um segmento de reta, facilitando a visualização das variações entre os pontos.
-No exemplo abaixo, a linha liga a quantidade de pessoas por gênero.
-
-```{r}
-
-ggplot(data = big_five) +
-  geom_line(aes(x = gênero, group = 1), stat = "count")
-  
-```
-
-## Modificação de argumentos dentro do geom (color, shape, size)
-
-Uma coisa importante nos gráficos é que eles sejam visualmente atrativos.
-Para isso, podemos alterar diversos argumentos que os compõem, como cores, formas (shapes) e tamanhos (sizes).
-
-```{r}
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab, color = gênero))
-
-
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab, shape = gênero))
-
-# retirando color de dentro de aes
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab, shape = gênero),
-             color = "darkolivegreen")
-```
-
-As cores podem ser inseridas pelo seu nome ou pelo seu código.
-[Clique aqui](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf "Paleta de cores") para baixar um arquivo com os nomes das cores do R... e [aqui](https://coolors.co/ "Site gerador de paletas") para acessar um site gerador de paletas de cores, por código.
-Os códigos devem ser inseridos após uma hashtag.
-
-```{r}
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab, shape = gênero),
-             color = "#3d5a80")
-# Site gerador de paletas: https://coolors.co/
-
-```
-
-Também é possível modificar o formato (shape) dos pontos.
-[Este site](http://www.sthda.com/english/wiki/ggplot2-point-shapes) tem uma lista dos shapes que podem ser utilizados.
-
-```{r}
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab),
-             color = "#61988E", shape = 18)
-# Shapes possíveis: http://www.sthda.com/english/wiki/ggplot2-point-shapes
-
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab),
-             color = "#61988E", shape = 18, size = 5)
-# é possível ajustar a borda (color) e o preenchimento dos pontos (fill)
-# nesse site, os shapes de 21 a 25 permitem ajuste de color e fill
-ggplot(data = big_five20) +
-  geom_point(aes(x = extr, y = amab),
-             fill = "#61988E", color = "black", shape = 25, size = 8)
-```
-
-## Adicionando um segundo geom
-
-Como foi dito anteriormente, o ggplot segue o principio de camadas sobrepostas.
-Portanto, é possível adicionar várias camadas, como outro geom, por exemplo.
-
-```{r}
-#ggplot(data = big_five20) +
-#  geom_point(aes(x = extr, y = amab),
-#             color = "#61988E", shape = 16, size = 2) +
-#  geom_line(aes(x = extr, y = amab), stat = "smooth", 
-#            method = "lm")
-
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_line()
-
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_line(stat = "smooth", method = "lm")
-
-```
-
-```{r}
-
-# alterando o tipo de curva de interpolação dos pontos
-
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_smooth()
-
-
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "black", size = 1)
-
-# Mudando o tipo de linha
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_smooth(method = "lm", se = F, color = "black", size = 0.7,
-              linetype = "dashed")
-
-## Especificando aes específicas para um dos geoms
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 0.7) +
-  geom_smooth(method = "lm", se = F, color = "black", size = 0.5,
-              aes(linetype = gênero))
-
-## Especificando aes específicas para um dos geoms
-ggplot(data = big_five20, aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 0.7) +
-  geom_smooth(method = "lm", se = F, size = 0.5,
-              aes(color = gênero))
-
-```
-
-## dplyr e ggplot
-
-Uma opção interessante para a elaboração de gráficos é combinar funções do dplyr com as do ggplot.
-Por exemplo, ao invés de criar um dataframe com 20 sujeitos, como estávamos fazendo até aqui, podemos selecionar a quantidade de sujeitos desejada por meio da função slice.
-
-```{r}
-# repetindo o último gráfico, mas combinando dplyr com ggplot
-big_five %>% slice(1:20) %>% 
-ggplot(aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 0.7) +
-  geom_smooth(method = "lm", se = F, size = 0.5,
-              aes(color = gênero))
-
-# ou, se quisermos fazer o mesmo gráfico com 1% da amostra
-big_five %>% slice_sample(prop = .01) %>% 
-  ggplot(aes(x = extr, y = amab)) +
-  geom_point(color = "#61988E", shape = 16, size = 2) +
-  geom_smooth(method = "lm", se = F, size = 1,na.rm = TRUE,
-              aes(color = gênero))
-```
-
-## Usando funções estatísticas
-
-```{r}
-## Usando o geom para representar um "summary"
-### (stat = summary) x stat_summary()
-
-big_five %>% filter(idade <= 80) %>% # tem idades erradas no banco
-ggplot() +
-  geom_point(aes(x = gênero, y = idade), stat = "summary", fun = "mean")
-
-# mesmo gráfico que o anterior, mas usando a função stat_summary
-big_five %>% filter(idade <= 80) %>%
-ggplot(aes(x = gênero, y = idade)) +
-  stat_summary(geom = "point", fun = "mean")
-
-# usando a mediana no lugar da média.
-big_five %>% filter(idade <= 80) %>%
-ggplot(aes(x = gênero, y = idade)) +
-  stat_summary(geom = "point", fun = "median")
-
-## Incluindo barras de erros (usando também o summary)
-
-big_five %>% filter(idade <= 80) %>%
-ggplot(aes(x = gênero, y = idade)) +
-  geom_point(stat = "summary", fun = "mean") +
-  geom_errorbar(stat = "summary", fun.data = "mean_se")
-
-# usando width para melhorar a visualiazação
-
-big_five %>% filter(idade <= 80) %>%
-ggplot(aes(x = gênero, y = idade)) +
-  geom_point(stat = "summary", fun = "mean") +
-  geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3)
-
-# trocando erro da média (mean_se) pelo mínimo e máximo.
-
-big_five %>% filter(idade <= 80) %>%
-ggplot(aes(x = gênero, y = idade)) +
-  geom_point(stat = "summary", fun = "mean") +
-  geom_errorbar(stat = "summary", fun.min = "min", fun.max = "max")
-```
