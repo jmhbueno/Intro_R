@@ -19,35 +19,48 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 
 # Introdução
 
-O R é uma linguagem e um ambiente dentro do qual se pode fazer uma infinidade de operações estatísticas e de processamento de dados.
-Foi concebido para ser colaborativo e gratuito.
-Qualquer pessoa pode criar uma função, ou um conjunto de funções (pacote) e disponibilizar a outros usuários... **gratuitamente**!
-Visite o o [site](https://cran.r-project.org/) do R e baixe o programa para instalação em seu computador.
+O R é uma linguagem e um ambiente dentro do qual se pode fazer uma
+infinidade de operações estatísticas e de processamento de dados. Foi
+concebido para ser colaborativo e gratuito. Qualquer pessoa pode criar
+uma função, ou um conjunto de funções (pacote) e disponibilizar a outros
+usuários... **gratuitamente**! Visite o o
+[site](https://cran.r-project.org/) do R e baixe o programa para
+instalação em seu computador.
 
-Em associação ao R, costuma-se usar o RStudio (baixe e instale clicando [aqui](https://www.rstudio.com/)), que facilita o uso do R ao disponibilizar um conjunto de quatro janelas que funcionam para as seguintes funções:
+Em associação ao R, costuma-se usar o RStudio (baixe e instale clicando
+[aqui](https://www.rstudio.com/)), que facilita o uso do R ao
+disponibilizar um conjunto de quatro janelas que funcionam para as
+seguintes funções:
 
 1)  digitação de texto (superior, à esquerda),\
 2)  display de resultados (console) (inferior, à esquerda),\
-3)  visualizador de objetos (arquivos) gerados ao realizar um trabalho (superior, à direita),
-4)  informações gerais: arquivos, plotagens, pacotes instalados, help, e visualizador de imagens (inferior, à direita).
+3)  visualizador de objetos (arquivos) gerados ao realizar um trabalho
+    (superior, à direita),
+4)  informações gerais: arquivos, plotagens, pacotes instalados, help, e
+    visualizador de imagens (inferior, à direita).
 
-Para a digitação dos comandos, deve-se abrir um novo Script.
-Faz-se isso com a seguinte linha de comando: `File + New File + R Script`, ou pressionando simultaneamente os botões `CTRL+SHIFT+N`.
-Fazendo isso, abrirá uma aba no quadrante superior esquerdo.
-Você pode abrir quantas abas desejar.
+Para a digitação dos comandos, deve-se abrir um novo Script. Faz-se isso
+com a seguinte linha de comando: `File + New File + R Script`, ou
+pressionando simultaneamente os botões `CTRL+SHIFT+N`. Fazendo isso,
+abrirá uma aba no quadrante superior esquerdo. Você pode abrir quantas
+abas desejar.
 
 É possível rodar um comando no R de duas formas:
 
--   Selecionando-o e clicando em "Run" na aba superior da área de digitação.
+-   Selecionando-o e clicando em "Run" na aba superior da área de
+    digitação.
 
--   Colocar o cursor em qualquer ponto da linha de comando e apertar `CTRL+ENTER`.
+-   Colocar o cursor em qualquer ponto da linha de comando e apertar
+    `CTRL+ENTER`.
 
 ## Instalação e ativação de pacotes
 
-Algumas funções não precisam da instalação de pacotes, pois já vêm com o R.
-São funções básicas (base), como operações matemáticas, plotagem, estatísticas básicas, entre outras.
-Outras funções estão em pacotes que precisam ser **instalados**, por meio do comando `install.packages()`, e **ativados**, por meio do comando `library()`.
-Então, vamos instalar alguns pacotes que iremos utilizar durante o curso.
+Algumas funções não precisam da instalação de pacotes, pois já vêm com o
+R. São funções básicas (base), como operações matemáticas, plotagem,
+estatísticas básicas, entre outras. Outras funções estão em pacotes que
+precisam ser **instalados**, por meio do comando `install.packages()`, e
+**ativados**, por meio do comando `library()`. Então, vamos instalar
+alguns pacotes que iremos utilizar durante o curso.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Instalação dos pacotes
@@ -68,44 +81,53 @@ library(knitr)
 library(expss)
 ```
 
-Todo pacote do R tem uma documentação, com informações sobre as funções que o pacote contém.
-Uma forma de encontrar essa documentação é no site [rdocumentation.org](rdocumentation.org).
+Todo pacote do R tem uma documentação, com informações sobre as funções
+que o pacote contém. Uma forma de encontrar essa documentação é no site
+[rdocumentation.org](rdocumentation.org).
 
-As funções contidas dentro dos pacotes ser acessadas digitando-se um ponto de interrogação (?) antes do nome da função.
-Por exemplo, se quisermos a documentação da função **hist** da base do R, é só rodar o comando:
+As funções contidas dentro dos pacotes ser acessadas digitando-se um
+ponto de interrogação (?) antes do nome da função. Por exemplo, se
+quisermos a documentação da função **hist** da base do R, é só rodar o
+comando:
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 ?hist()
 ```
 
-A documentação aparecerá na aba **Help** do quadrante de visualizações de informações do RStudio.
+A documentação aparecerá na aba **Help** do quadrante de visualizações
+de informações do RStudio.
 
 ## Operadores básicos
 
-Existem também alguns operadores importantes no R, que você deve conhecer:\
-Um deles é a seta para a esquerda, formada com o sinal de *menor* e o traço de *menos*: `<-`.
+Existem também alguns operadores importantes no R, que você deve
+conhecer:\
+Um deles é a seta para a esquerda, formada com o sinal de *menor* e o
+traço de *menos*: `<-`.
 
-Atalho para esse operador: pressione simultaneamente as teclas `ALT` e `-`
+Atalho para esse operador: pressione simultaneamente as teclas `ALT` e
+`-`
 
-Esse operador indica que o resultado de uma operação será salva em um **objeto**.
+Esse operador indica que o resultado de uma operação será salva em um
+**objeto**.
 
-Por exemplo: o comando abaixo diz "*faça a soma de 3 com 4 e guarde o resultado num objeto chamado **soma**"*.
-Esse objeto (soma) aparecerá no environment (quadrante superior direito do RStudio).
+Por exemplo: o comando abaixo diz "*faça a soma de 3 com 4 e guarde o
+resultado num objeto chamado **soma**"*. Esse objeto (soma) aparecerá no
+environment (quadrante superior direito do RStudio).
 
 ```{r}
 soma <- 3 + 4 
 ```
 
-O comando "#" permite que você faça comentários, sem que o R o entenda como comando.
-Por exemplo:
+O comando "#" permite que você faça comentários, sem que o R o entenda
+como comando. Por exemplo:
 
 ```{r}
 soma <- 3 + 4   # Esse comando calcula a soma de 3 + 4 e salva no objeto "soma"
 ```
 
-O texto que aparece após a #, em outra cor (verde, azul, etc.), é ignorado pelo R.
-Esses são os comandos mais básicos.
-Há muitos outros atalhos...
+O texto que aparece após a #, em outra cor (verde, azul, etc.), é
+ignorado pelo R. Esses são os comandos mais básicos. Há muitos outros
+atalhos...
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 atalhos <- data.frame(atalho  =c("CTRL + ENTER",
@@ -134,7 +156,9 @@ knitr::kable(atalhos, format = "markdown")
 
 ## Definir diretório de trabalho
 
-Para facilitar o trabalho com salvamento e recuperação de arquivos, é recomendável que se defina um diretório de trabalho, onde todos os arquivos referentes à análise de dados serão salvos.
+Para facilitar o trabalho com salvamento e recuperação de arquivos, é
+recomendável que se defina um diretório de trabalho, onde todos os
+arquivos referentes à análise de dados serão salvos.
 
 ```{r}
 # para verificar o diretório atual, execute o comando: 
@@ -150,7 +174,8 @@ setwd("C:/Users/jmhbu/OneDrive/Documentos/R/R_basico/Intro_R")
 
 O R pode ser usado como calculadora...
 
-A tabela a seguir apresenta os principais operadores que usamos nos códigos em R.
+A tabela a seguir apresenta os principais operadores que usamos nos
+códigos em R.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 table_operadores <- data.frame(Operador = c("+","-","*","/",":","^","sqrt","==",
@@ -208,8 +233,8 @@ sqrt(9)
 
 ## Operações lógicas
 
-Algumas palavras são reservadas no R para operações lógicas.
-As principais são TRUE, FALSE e NA.
+Algumas palavras são reservadas no R para operações lógicas. As
+principais são TRUE, FALSE e NA.
 
 ```{r echo=FALSE, eval=TRUE}
 
@@ -252,8 +277,9 @@ class(minha_lista)
 # o comando "c", significa "concatenar". É usado para inserir mais de uma informação.
 ```
 
-**Vetor**: é uma coleção de informações ou elementos **da mesma natureza**.
-Por exemplo, as variáveis que costumamos colocar nas colunas dos nossos bancos de dados são **vetores**.
+**Vetor**: é uma coleção de informações ou elementos **da mesma
+natureza**. Por exemplo, as variáveis que costumamos colocar nas colunas
+dos nossos bancos de dados são **vetores**.
 
 ```{r}
 meu_vetor <- c("masculino","feminino","feminino","masculino","feminino")
@@ -277,8 +303,8 @@ vetor
 class(vetor)
 ```
 
-**Dataframe**: é um conjunto de vetores.
-Nossos bancos de dados, no R, recebem o nome de dataframes.
+**Dataframe**: é um conjunto de vetores. Nossos bancos de dados, no R,
+recebem o nome de dataframes.
 
 ```{r}
 # criar vetor sexo, em que 1 é masculino e 2 é feminino.
@@ -371,8 +397,9 @@ df <- df_copia
 
 # Funções para manipulação de dados
 
-Muitas vezes, precisamos manipular os dados de um dataframe, seja para renomear colunas, selecionar linhas ou colunas, adicionar variáveis ou sujeitos, entre outras.
-Vejamos algumas delas.
+Muitas vezes, precisamos manipular os dados de um dataframe, seja para
+renomear colunas, selecionar linhas ou colunas, adicionar variáveis ou
+sujeitos, entre outras. Vejamos algumas delas.
 
 ## Alteração do nome de variáveis
 
@@ -460,9 +487,10 @@ df <- df[ ,c("id","sexo","idade","escolaridade","estado_civil",
 variables <- read_xlsx("Variables.xlsx")
 ```
 
-Nesse caso, temos o dataframe `variables`, com a informação de cinco variáveis dos mesmos sujeitos que constam no dataframe `df`.
-Então, gostaríamos de juntar esses dois dataframes.
-Para isso podemos usar duas funções.
+Nesse caso, temos o dataframe `variables`, com a informação de cinco
+variáveis dos mesmos sujeitos que constam no dataframe `df`. Então,
+gostaríamos de juntar esses dois dataframes. Para isso podemos usar duas
+funções.
 
 ```{r}
 # Juntar a planilha importada no dataframe df
@@ -495,17 +523,23 @@ glimpse(df)
 
 ## Lidando com dados ausentes
 
-A função `na.omit` deleta as informações de uma linha inteira que contenha ao menos uma informação ausente.\
-A função `na.exclude` faz quase a mesma coisa, mas apenas omite a linha e acaba reportando alguns resultados, como resíduos, por exemplo, em análises de regressão.
-Além disso, também preserva o número de linhas do dataframe.
-Isso é importante em certas ocasiões que se deseja manter constante o número de linhas de um dataframe para coincidir com outro dataframe, por exemplo.
+A função `na.omit` deleta as informações de uma linha inteira que
+contenha ao menos uma informação ausente.\
+A função `na.exclude` faz quase a mesma coisa, mas apenas omite a linha
+e acaba reportando alguns resultados, como resíduos, por exemplo, em
+análises de regressão. Além disso, também preserva o número de linhas do
+dataframe. Isso é importante em certas ocasiões que se deseja manter
+constante o número de linhas de um dataframe para coincidir com outro
+dataframe, por exemplo.
 
 ```{r}
 na.omit(df)
 na.exclude(df)
 ```
 
-Outra função bastante empregada é a `na.rm`, que normalmente é usada dentro de funções estatísticas para sinalizar que os valores NA devem ser ignorados.
+Outra função bastante empregada é a `na.rm`, que normalmente é usada
+dentro de funções estatísticas para sinalizar que os valores NA devem
+ser ignorados.
 
 ```{r}
 # mean(df$idade)    # essa função acaba não rodando, porque entre os dados de idade existe um NA
@@ -514,9 +548,11 @@ mean(df$idade,na.rm = TRUE) # dessa forma, conseguimos rodar a análise.
 
 # Função `ifelse()`
 
-A função `ifelse()` é bastante útil para a manipulação de dados.
-Ela deve ser escrita da seguinte forma: `ifelse("condição", "se sim", "se não")` Traduzindo: observe a condição... se ela ocorrer, faça isso... se ela não ocorrer, faça aquilo.
-Exemplos:
+A função `ifelse()` é bastante útil para a manipulação de dados. Ela
+deve ser escrita da seguinte forma:
+`ifelse("condição", "se sim", "se não")` Traduzindo: observe a
+condição... se ela ocorrer, faça isso... se ela não ocorrer, faça
+aquilo. Exemplos:
 
 ```{r}
 # se quisermos classificar a renda em dois grupos: menor igual a R$2000 e maior que R$2000, podemos usar a função ifelse()
@@ -566,10 +602,14 @@ recode(df[ ,c("v1","v5")]) <- c(1~5,2~4,3~3,4~2,5~1)
 
 # Importar e exportar arquivos de/para outros formatos
 
-Há vários pacotes para importação de arquivos elaborados em outros programas, como o Excel e o SPSS, por exemplo, que são muito comuns em pesquisas em Psicologia.
-De forma semelhante, às vezes, analisamos os dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos de exportar essa planilha para outros formatos, para serem lidos por outros programas, por exemplo.
-A seguir, veremos como fazer isso, começando pela **exportação de arquivos**.
-## Exportação de arquivos \### Usando função da base
+Há vários pacotes para importação de arquivos elaborados em outros
+programas, como o Excel e o SPSS, por exemplo, que são muito comuns em
+pesquisas em Psicologia. De forma semelhante, às vezes, analisamos os
+dados no R/RStudio, salvamos a planilha em um dataframe, mas gostaríamos
+de exportar essa planilha para outros formatos, para serem lidos por
+outros programas, por exemplo. A seguir, veremos como fazer isso,
+começando pela **exportação de arquivos**. \## Exportação de arquivos
+\### Usando função da base
 
 ```{r}
 
@@ -680,13 +720,17 @@ read_sav("df.sav")
 
 # Pacote `tidyverse`
 
-O `tidyverse` é uma família de pacotes que compartilham a mesma filosofia e linguagem de programação.
-Fazem parte dessa família pacotes como o `dplyr`, o `tidyr`, o `readr` e o `ggplot2`, entre outros.
-O `dplyr` e o `tidyr` são pacotes com funções para a **manipulação de dados**, O `ggplot2` é um pacote poderoso para fazer **gráficos** e o `readr` permite a importação e exportação de dados.
+O `tidyverse` é uma família de pacotes que compartilham a mesma
+filosofia e linguagem de programação. Fazem parte dessa família pacotes
+como o `dplyr`, o `tidyr`, o `readr` e o `ggplot2`, entre outros. O
+`dplyr` e o `tidyr` são pacotes com funções para a **manipulação de
+dados**, O `ggplot2` é um pacote poderoso para fazer **gráficos** e o
+`readr` permite a importação e exportação de dados.
 
-Uma função básica do Tidyverse é a **função pipe** `%>%`, que se obtém pressionando as teclas `CTRL+SHIFT+M`.
-Essa função pode ser interpretada como "então" e permite escrever códigos na sequência em que ocorrem.
-Por exemplo:
+Uma função básica do Tidyverse é a **função pipe** `%>%`, que se obtém
+pressionando as teclas `CTRL+SHIFT+M`. Essa função pode ser interpretada
+como "então" e permite escrever códigos na sequência em que ocorrem. Por
+exemplo:
 
 ```{r}
 # para criar e inserir uma variável no banco de dados, ao invés de usar o sistema tradicional, podemos usar a linguagem tidy.
@@ -698,14 +742,18 @@ df %>% group_by(sexo) %>% summarise(média = mean(idade, na.rm = TRUE))
 str(df)
 ```
 
-Na sintaxe acima, usamos algumas funções que serão discutidas a seguir, mas é possível ver como escrevemos os códigos usando o pipe. Em português, esse código ficaria assim: pegue o dataframe df, **então** agrupe pela variável sexo, **então** calcule as médias de idade. Esse comando ajuda bastante a escrever códigos mais complexos.
+Na sintaxe acima, usamos algumas funções que serão discutidas a seguir,
+mas é possível ver como escrevemos os códigos usando o pipe. Em
+português, esse código ficaria assim: pegue o dataframe df, **então**
+agrupe pela variável sexo, **então** calcule as médias de idade. Esse
+comando ajuda bastante a escrever códigos mais complexos.
 
-## Comando `%in%`
+# Comando `%in%`
 
 ```{r}
 which(seq(1,by=1,length=10) %in% seq(4,by=1,length=9))
-
 ```
+
 Usando %in% para adicionar uma nova coluna a um dataframe em R
 
 ```{r}
@@ -727,11 +775,13 @@ Usando %in% para adicionar uma nova coluna a um dataframe em R
 # })
 ```
 
-
 # Pacote `dplyr`
 
-Esse pacote da família `tidyverse` apresenta um conjunto de funções que permite selecionar variáveis, filtrar observações, selecionar linhas, organizar apresentação de resultados, criar e/ou modificar variáveis, agrupar variáveis, entre outras.
-Esses comandos são conhecidos como os **verbos do dplyr**.
+Esse pacote da família `tidyverse` apresenta um conjunto de funções que
+permite selecionar variáveis, filtrar observações, selecionar linhas,
+organizar apresentação de resultados, criar e/ou modificar variáveis,
+agrupar variáveis, entre outras. Esses comandos são conhecidos como os
+**verbos do dplyr**.
 
 ```{r echo=FALSE}
 tidyverse_table <- data.frame("Funções tidyverse(dplyer)"=c(
@@ -752,7 +802,8 @@ library(knitr)
 tidyverse_table %>% kable(format = "markdown")
 ```
 
-Vamos testar uma por uma, com o nosso dataframe df, começando pela função `select()`, que seleciona **colunas** do dataframe.
+Vamos testar uma por uma, com o nosso dataframe df, começando pela
+função `select()`, que seleciona **colunas** do dataframe.
 
 ## select()
 
@@ -824,7 +875,8 @@ df %>% select(where(is.numeric) & starts_with(c("s","v")))
 
 ## filter()
 
-Se a função `select()` permite a seleção de colunas de um dataframe, a função `filter()` permite a seleção de **linhas**.
+Se a função `select()` permite a seleção de colunas de um dataframe, a
+função `filter()` permite a seleção de **linhas**.
 
 ```{r}
 ## se quisermos filtrar somente os participantes do sexo masculino
@@ -851,16 +903,23 @@ df %>% filter(renda_total >= 2000)
 df_renda_maior2000 <- df %>% filter(renda_total >= 2000)
 ```
 
-As funções `select()` e `filter()` são muito úteis para limpeza do banco de dados.
-Por exemplo, quando baixamos um banco de dados do google formulário, ele vem com as informações de data e hora que o participante respondeu o questionário, com as respoostas ao TCLE, que normalmente não iremos utilizar nas análises.
-Então, podemos deletá-las usando a função `select()`.
-Outra aplicação muito comum é para criar um *subset* do arquivo base, que contenha somente os itens de um dos instrumentos, para análise de suas propriedades psicométrias.\
-De forma semelhante, podemos usar a função `filter()` para eliminar sujeitos que não atendem aos critérios de inclusão da pesquisa.
-Ou selecionar um *subset* do banco de dados, que contenha os sujeitos de interesse.
+As funções `select()` e `filter()` são muito úteis para limpeza do banco
+de dados. Por exemplo, quando baixamos um banco de dados do google
+formulário, ele vem com as informações de data e hora que o participante
+respondeu o questionário, com as respoostas ao TCLE, que normalmente não
+iremos utilizar nas análises. Então, podemos deletá-las usando a função
+`select()`. Outra aplicação muito comum é para criar um *subset* do
+arquivo base, que contenha somente os itens de um dos instrumentos, para
+análise de suas propriedades psicométrias.\
+De forma semelhante, podemos usar a função `filter()` para eliminar
+sujeitos que não atendem aos critérios de inclusão da pesquisa. Ou
+selecionar um *subset* do banco de dados, que contenha os sujeitos de
+interesse.
 
 ## slice()
 
-Uma opção para selecionar casos com base na linha inteira é a função `slice()`.
+Uma opção para selecionar casos com base na linha inteira é a função
+`slice()`.
 
 ```{r}
 # selecionar linhas inteiras
@@ -892,9 +951,10 @@ df %>% arrange(desc(renda_total))
 df %>% arrange(sexo,desc(renda_total))
 ```
 
-A função `mutate()` permite criar variáveis dentro de um dataframe.
-É muito útil para calcular pontuações a partir de itens, por exemplo, ou para fazer transformações de outras variáveis.\
-## mutate
+A função `mutate()` permite criar variáveis dentro de um dataframe. É
+muito útil para calcular pontuações a partir de itens, por exemplo, ou
+para fazer transformações de outras variáveis.\
+\## mutate
 
 ```{r}
 # calcular as pontuações das pessoas nos itens de v1 a v5.
@@ -911,7 +971,9 @@ glimpse(df)
 
 ## group_by
 
-A função `group_by` agrupa os resultados de uma operação e, geralmente, é usada juntamente com alguma outra operação, como por exemplo, a função `summarise()`.
+A função `group_by` agrupa os resultados de uma operação e, geralmente,
+é usada juntamente com alguma outra operação, como por exemplo, a função
+`summarise()`.
 
 ```{r}
 
@@ -936,9 +998,10 @@ df %>% rename(item1 = v1,
 
 ## Combinação de variáveis (left_join, right_join, inner_join, full_join, semi_join, anti_join)
 
-Num primeiro caso, vamos combinar dois data frames com o mesmo número de linhas e colunas.
-Para isso, é necessário ter pelo menos uma variável em comum nos dois bancos de dados.
-Esssa variável será usada pela função para combinar os dois dataframes.
+Num primeiro caso, vamos combinar dois data frames com o mesmo número de
+linhas e colunas. Para isso, é necessário ter pelo menos uma variável em
+comum nos dois bancos de dados. Esssa variável será usada pela função
+para combinar os dois dataframes.
 
 ```{r}
 ## criando df2 para combinar com df
@@ -951,10 +1014,13 @@ data.frame(id = c("s1","s2","s3","s4","s5","s6"),
 left_join(df,df2) # Para salvar o novo dataframe, teríamos que apontar a função para um novo objeto.
 ```
 
-Note que a função reconheceu duas variáveis em comum (id e renda_total) e sinalizou isso dizendo `Joining, by = c("id", "renda_total")` no início dos resultados.
-Mas, muitas vezes a situação é mais complexa.
-Podemos ter um segundo dataframe com informações adicionais de apenas **ALGUNS** participantes que estão no primeiro dataframe.
-Além disso, podemos ter participantes adicionais, que não estão no primeiro dataframe.
+Note que a função reconheceu duas variáveis em comum (id e renda_total)
+e sinalizou isso dizendo `Joining, by = c("id", "renda_total")` no
+início dos resultados. Mas, muitas vezes a situação é mais complexa.
+Podemos ter um segundo dataframe com informações adicionais de apenas
+**ALGUNS** participantes que estão no primeiro dataframe. Além disso,
+podemos ter participantes adicionais, que não estão no primeiro
+dataframe.
 
 ```{r}
 # Não temos mais os participantes s2 e s4 e temos outros participantes (s7 a s10), que não estão em df
@@ -967,27 +1033,34 @@ left_join(df,df2)
 ```
 
 Observe que somente os **DADOS EM COMUM** foram para o novo dataframe.
-Ou seja, participantes que não constavam em df não foram acrescentados e informações não disponíveis em df2 sobre participantes de df foram registradas como `NA`.
-A função chama-se `left_join` exatamente por tomar o dataframe à esquerda (o primeiro) como referência para fazer as alterações.\
-Se quisermos usar o segundo dataframe como referência (df2), podemos usar a função `right_join`
+Ou seja, participantes que não constavam em df não foram acrescentados e
+informações não disponíveis em df2 sobre participantes de df foram
+registradas como `NA`. A função chama-se `left_join` exatamente por
+tomar o dataframe à esquerda (o primeiro) como referência para fazer as
+alterações.\
+Se quisermos usar o segundo dataframe como referência (df2), podemos
+usar a função `right_join`
 
 ```{r}
 right_join(df,df2)
 ```
 
-Caso se queira apenas as informações que constem **em ambos os dataframes**, pode-se usar a função `inner_join`.
+Caso se queira apenas as informações que constem **em ambos os
+dataframes**, pode-se usar a função `inner_join`.
 
 ```{r}
 inner_join(df,df2)
 ```
 
-Caso se queira a **JUNÇÃO COMPLETA DOS DOIS DATAFRAMES**, pode-se usar a função `full_join`.
+Caso se queira a **JUNÇÃO COMPLETA DOS DOIS DATAFRAMES**, pode-se usar a
+função `full_join`.
 
 ```{r}
 full_join(df,df2)
 ```
 
-Caso a variável comum esteja com nomes diferentes nos dois dataframes, basta acrescentar essa informação ao comando.
+Caso a variável comum esteja com nomes diferentes nos dois dataframes,
+basta acrescentar essa informação ao comando.
 
 ```{r}
 df2 <- 
@@ -998,15 +1071,18 @@ data.frame(Participantes = c("s1","s3","s5","s6","s7","s8","s9","s10"),
 left_join(df,df2, by = c("id" = "Participantes"))
 ```
 
-A função `semi_join` pode ser empregada para filtrar as observações (linhas) de df que possuem correspondência em df2.
+A função `semi_join` pode ser empregada para filtrar as observações
+(linhas) de df que possuem correspondência em df2.
 
 ```{r}
 semi_join(df,df2, by = c("id" = "Participantes"))
 ```
 
-Note que nenhuma variável é acrescentada, mas o dataframe é reduzido para apenas as observações de df que apresentam todas as informações em df2.
-O contrário também pode ser obtido, ou seja, as informações de df que NÃO APRESENTAM CORRESPONDÊNCIA em df2.
-Para isso, devemos usar a função `anti_join`.
+Note que nenhuma variável é acrescentada, mas o dataframe é reduzido
+para apenas as observações de df que apresentam todas as informações em
+df2. O contrário também pode ser obtido, ou seja, as informações de df
+que NÃO APRESENTAM CORRESPONDÊNCIA em df2. Para isso, devemos usar a
+função `anti_join`.
 
 ```{r}
 anti_join(df,df2, by = c("id" = "Participantes"))
@@ -1014,8 +1090,9 @@ anti_join(df,df2, by = c("id" = "Participantes"))
 
 ## Combinação de observações (union, setdiff, intersect, bind_rows)
 
-O dataframe `df3` contém cinco observações (s6 a s10) compatíveis com as variáveis de `df`.
-sendo que as informações do sujeito s6 estão repetidas em ambos os dataframes.
+O dataframe `df3` contém cinco observações (s6 a s10) compatíveis com as
+variáveis de `df`. sendo que as informações do sujeito s6 estão
+repetidas em ambos os dataframes.
 
 ```{r include=FALSE}
 df3 <- 
@@ -1047,37 +1124,44 @@ glimpse(df)
 glimpse(df3)
 ```
 
-Para unir todas as observações de df e df3 podemos usar a função `union`.
+Para unir todas as observações de df e df3 podemos usar a função
+`union`.
 
 ```{r}
 union(df,df3)
 ```
 
-Para selecionar somente as observações em comum nos dois dataframes, podemos usar a função `intersect`.
+Para selecionar somente as observações em comum nos dois dataframes,
+podemos usar a função `intersect`.
 
 ```{r}
 intersect(df,df3)
 ```
 
-Para selecionar somente as observações únicas de df, podemos usar a função `setdiff`.
+Para selecionar somente as observações únicas de df, podemos usar a
+função `setdiff`.
 
 ```{r}
 setdiff(df,df3)
 ```
 
-Para unir os dataframes df e df3, mas colocando uma identificação de onde veio cada observação, podemos usar `bind_rows`.
+Para unir os dataframes df e df3, mas colocando uma identificação de
+onde veio cada observação, podemos usar `bind_rows`.
 
 ```{r}
 bind_rows(df,df3,.id="grupo")
 ```
 
-Note, porém, que a saída incluiu duas vezes o sujeito s06, porque a função bind_rows simplesmente une os dois dataframes, sem fazer nenhum tipo de concatenação entre eles.
+Note, porém, que a saída incluiu duas vezes o sujeito s06, porque a
+função bind_rows simplesmente une os dois dataframes, sem fazer nenhum
+tipo de concatenação entre eles.
 
 ## pivot_longer e pivot_wider (funções tidyr)
 
-Às vezes precisamos fazer transformações no formato do banco de dados para fazer alguma análise estatística ou gráfico.
-Precisamos transformar as linhas em colunas ou as colunas em linhas.
-Esses dois comandos do dplyr ajudam a realizar esses procedimentos.
+Às vezes precisamos fazer transformações no formato do banco de dados
+para fazer alguma análise estatística ou gráfico. Precisamos transformar
+as linhas em colunas ou as colunas em linhas. Esses dois comandos do
+dplyr ajudam a realizar esses procedimentos.
 
 ```{r}
 # ACRESCENTAR INFORMAÇÃO
@@ -1106,11 +1190,14 @@ str(imdb)
 
 # Pacote `tidyr`
 
-O pacote `tidyr` também pertence à família `tidyverse` e apresenta algumas funções que facilitam a manipulação de variáveis, na maioria das vezes, envolvendo todo o dataframe.
+O pacote `tidyr` também pertence à família `tidyverse` e apresenta
+algumas funções que facilitam a manipulação de variáveis, na maioria das
+vezes, envolvendo todo o dataframe.
 
 ## Eliminar valores ausentes com a função `drop_na`
 
-Função semelhante a na.omit, mas que permite informar em quais variáveis se quer verificar a existência de valores ausentes.
+Função semelhante a na.omit, mas que permite informar em quais variáveis
+se quer verificar a existência de valores ausentes.
 
 ```{r}
 # utilização genérica da função
@@ -1141,8 +1228,8 @@ df4 <- df %>% mutate(cod = paste(id,c(2012,2011,2015,2011,2013,2014),sep = "/"))
 df4 %>% separate(cod, sep = "/", into = c("cod_suj","ano_de_entrada"))
 ```
 
-No caso acima, a variável cod tinha um separador das informações: a barra.
-Mas há casos em que não se tem nem isso.
+No caso acima, a variável cod tinha um separador das informações: a
+barra. Mas há casos em que não se tem nem isso.
 
 ```{r}
 # recriando df4 com três informações na última coluna
@@ -1159,27 +1246,33 @@ df4 %>% separate(cod, sep = c(2,6), into = c("cod_suj","ano_de_entrada","ordem_d
 
 ## Alterar o layout dos dados
 
-Muitas vezes, para realizar análises estatísticas no R, é necessário alterar a disposição dos dados.
-A seguir são apresentadas algumas funções do tidyr que podem auxiliar nesse processo.
-Uma delas é a função `gather`.
+Muitas vezes, para realizar análises estatísticas no R, é necessário
+alterar a disposição dos dados. A seguir são apresentadas algumas
+funções do tidyr que podem auxiliar nesse processo. Uma delas é a função
+`gather`.
 
-Suponhamos que no dataframe df as variáveis v1 a v5 são medidas de um mesmo atributo ao longo do tempo.Assim, desejamos representá-la em apenas uma coluna.\
+Suponhamos que no dataframe df as variáveis v1 a v5 são medidas de um
+mesmo atributo ao longo do tempo.Assim, desejamos representá-la em
+apenas uma coluna.\
 Para isso, devemos informar três argumentos:
 
--   O `key`, que estabelece o nome da variável que irá receber as variáveis das colunas desejadas (v1 a v5).
+-   O `key`, que estabelece o nome da variável que irá receber as
+    variáveis das colunas desejadas (v1 a v5).
 
--   O `value`, que estabelece o nome da variável que irá conter os valores referentes à cada observação da variável `key`. 
+-   O `value`, que estabelece o nome da variável que irá conter os
+    valores referentes à cada observação da variável `key`.
 
--   A seleção das colunas que se deseja transformar em uma única coluna (v1 a v5.
+-   A seleção das colunas que se deseja transformar em uma única coluna
+    (v1 a v5.
 
 ```{r}
 df5 <- df %>% gather(key = "v1_a_v5", value = "valores_de_v",v1:v5)
 ```
 
-A função `spread` é a inversa da função `gather`. Ela transforma os valores dispostos em formato longo para o formato amplo.
+A função `spread` é a inversa da função `gather`. Ela transforma os
+valores dispostos em formato longo para o formato amplo.
 
 ```{r}
 df5 %>% spread(v1_a_v5,valores_de_v)
 
 ```
-
